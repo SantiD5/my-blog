@@ -1,0 +1,32 @@
+.main-card {
+  border: 1px solid #ccc; /* Optional: Add a border for the card */
+  border-radius: 8px; /* Optional: Round the corners */
+  padding: 16px; /* Optional: Add some padding */
+  max-width: 300px; /* Optional: Limit the card's width */
+  margin: 0 auto;
+}
+.main-card img{
+  max-width: 250px;
+}
+.icon {
+  width: 50px; /* Set the width of the icon */
+  height: 50px; /* Set the height of the icon */
+}
+
+.description {
+  display: flex; /* Enable flexbox */
+  justify-content: space-between; /* Space between items */
+  align-items: center; /* Center items vertically */
+  margin-top: 12px; /* Add space above the description */
+}
+
+.date,
+.time,
+.categoria {
+  font-size: 14px; /* Adjust font size for text */
+  color: #fff; /* Optional: Change text color */
+}
+
+.description-right {
+  margin-left: auto; /* Push the category to the right */
+}
