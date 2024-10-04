@@ -1,18 +1,15 @@
-/* src/components/Footer.css */
-
 .footer {
-  background-color: #333; /* Dark background */
-  color: white; /* White text */
-  text-align: center; /* Center align text */
-  padding: 20px; /* Padding around footer */
-  position: relative; /* Allows for positioning */
-  bottom: 0; /* Stick to the bottom */
+  color: white; 
+  text-align: center; 
+  padding: 20px; 
+  position: relative; 
+  bottom: 0; 
 }
 .footer hr{
   width: 60%;
 }
 .footer-content {
-  margin: 0 auto; /* Center the content */
+  margin: 0 auto; 
 }
 .footer-marked{
   color: rgb(55, 202, 25);

@@ -1,38 +1,98 @@
-body{
+@import '../../Styles/variables.css';
+body {
   margin: 0;
   padding: 0;
-  background-color: #333;
+  background-color: var(--background-color);
 }
-
 .header-nav {
   padding: 50px;
   width: 60%;
   margin: 0 auto;
- 
-}
-.links{
-  text-decoration: none;
-  color: white;
 }
 
+.links {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  position: relative;
+}
 .nav-ul {
-  list-style-type: none; /* Remove default list styling */
-  padding: 0; /* Remove padding */
+  list-style-type: none; 
+  padding: 0; 
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+.ul-right {
+  display: flex;
+  flex-direction: row;
+}
 
 .ul-li {
-  display: inline; /* Make list items horizontal */
-  margin-right: 15px; /* Spacing between items */
+  display: inline; 
+  margin-right: 15px;
+  position: relative;
 }
-
+.li-button {
+  background-color: #ff6347;
+  text-decoration: none;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 8px 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+.li-button:hover {
+  background-color: #ff4500;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+}
+.li-button:focus {
+  outline: none;
+}
+.links::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #ff6347;
+  transition: width 0.3s ease;
+}
+.links:hover::before {
+  width: 100%;
+}
+.links.active::before {
+  width: 100%;
+  background-color: #ff6347;
+}
 .nav-link {
-  color: white; /* White text color */
-  text-decoration: none; /* Remove underline from links */
+  color: white; 
+  text-decoration: none; 
+  font-size: 18px;
+  font-weight: 500;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
-
 .nav-link:hover {
-  text-decoration: underline; /* Underline on hover */
+  text-decoration: underline; 
+  color: #ff6347;
+  transform: translateX(5px);
+}
+@media screen and (max-width: 768px) {
+  .header-nav {
+    width: 100%;
+    padding: 20px;
+  }
+  .nav-ul {
+    flex-direction: column;
+    align-items: center;
+  }
+  .ul-li {
+    margin: 10px 0;
+  }
 }

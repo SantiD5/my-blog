@@ -1,9 +1,9 @@
 import './Card.css'
-export const Card = ({date,category,minutes}) =>{
+export const Card = ({date,category,minutes,img}) =>{
   return(
     <article className="main-card">
       <a href="">
-        <img src="../../assets/react.svg" alt="" />
+        <img src={img} alt={`Image for ${category}`} />
       </a>
       <div className="description">
         <p className="date">{date}</p>
