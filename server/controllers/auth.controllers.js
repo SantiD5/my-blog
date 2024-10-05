@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import jwt from 'jsonwebtoken';
+import createAccessToken from "../libs/jwt.js";
 import User from "../models/user.model.js";
 export const signup = async (req, res) => {
   const { username, email, password } = req.body;
@@ -12,22 +12,35 @@ export const signup = async (req, res) => {
       password: passwordHash,
     });
     const userSaved = await newUser.save();
-    jwt.sign(
-      {id:userSaved._id},
-
-    )
-    res.json({
-      id:userSaved._id,
-      username:userSaved.username,
-      email:userSaved.email,
-      updatedAt:userSaved.updatedAt,
-      createdAt:userSaved.createdAt
-    });
-    res.send("registrando...");
+    const token = await createAccessToken({id:userSaved._id})
+    res.cookie('token',{token},{ httpOnly: true });
+    res.json({message:"User created Succesfuly"})
   } catch (e) {
-    console.log(e);
+    return res.status(500).json({message:e.message});
   }
 };
-export const login = (req, res) => {
-  res.send("hola login");
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const userFound = await User.findOne({email})
+    if(!userFound){
+      return res.status(400).json({message:"user not found"})
+    }
+    const isMatch = await bcrypt.compare(password,userFound.password)
+    if(!isMatch){
+      return res.status(400).json({message:"Invalid Credentials"})
+    }
+    const token = await createAccessToken({id:userFound._id})
+    res.cookie("token",token)
+    res.json({
+      message: "Login successful",
+      id:userFound._id,
+      email:userFound.email,
+      username:userFound.username
+    })
+
+
+  } catch (e) {
+    return res.status(500).json({message:e.message});
+  }
 };

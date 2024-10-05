@@ -7,8 +7,6 @@
   font-family: Arial, sans-serif;
   padding: 20px;
 }
-
-/* Container styling */
 .container {
   background-color: white;
   padding: 40px;
@@ -18,15 +16,11 @@
   width: 100%;
   text-align: center;
 }
-
-/* Title styling */
 .container h2 {
   margin-bottom: 20px;
   font-size: 24px;
   color: #333;
 }
-
-/* Input field styling */
 form input {
   width: 100%;
   padding: 12px;
@@ -37,12 +31,9 @@ form input {
   outline: none;
   transition: border-color 0.3s ease;
 }
-
 form input:focus {
   border-color:var()
 }
-
-/* Button styling */
 form button {
   width: 100%;
   padding: 12px;
@@ -59,7 +50,6 @@ form button:hover {
   background-color: var(--secondary-orange);
 }
 
-/* Text and link styling */
 .container p {
   margin-top: 20px;
   font-size: 14px;
