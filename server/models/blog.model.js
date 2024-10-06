@@ -33,7 +33,11 @@ export const blogSchema = new mongoose.Schema({
     type: String,
     enum: ['draft', 'published'],
     default: 'draft',
-  },
+  },user:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'User',
+    required:true
+  }
 },{
 timestamps:true
 });
