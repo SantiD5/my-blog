@@ -6,7 +6,7 @@ import { zodblogSchema } from "../Schemas/blog.schema.js";
 const router = Router()
 
 router.post('/blogs',authRequired,validateSchema(zodblogSchema),createBlog)
-router.get('/blog/:id',authRequired,getblog)
+router.get('/gblogs/:id',getblog)
 router.delete('/blog/:id',authRequired,deleteBlog)
 router.put('/blog/:id',authRequired,updateBlog)
 router.get('/blogs',getBlogs)

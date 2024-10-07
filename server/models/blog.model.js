@@ -1,45 +1,34 @@
 import mongoose from 'mongoose';
 
 export const blogSchema = new mongoose.Schema({
-  title: {
+  userId: {
     type: String,
     required: true,
-    trim: true,
   },
-  slug: { 
+  content: {
+    type: String,
+    required: true,
+  },
+  title: {
     type: String,
     required: true,
     unique: true,
   },
-  description: {
+  image: {
+    type: String,
+    default:
+      'https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png',
+  },
+  category: {
+    type: String,
+    default: 'uncategorized',
+  },
+  slug: {
     type: String,
     required: true,
+    unique: true,
   },
-  author: {
-    type: String,
-    required: true,
-  },
-  tags: [{ 
-    type: String,
-  }],
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: { 
-    type: Date,
-  },
-  status: { 
-    type: String,
-    enum: ['draft', 'published'],
-    default: 'draft',
-  },user:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:'User',
-    required:true
-  }
-},{
-timestamps:true
-});
+},
+{ timestamps: true });
 
 export default mongoose.model("blog",blogSchema)

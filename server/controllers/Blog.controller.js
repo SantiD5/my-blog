@@ -1,22 +1,21 @@
 import blog from '../models/blog.model.js';
 
 export const createBlog = async (req, res) => {
-  const { title, description, author, slug, tags, date, updatedAt, status } = req.body;
-
-  // Ensure req.user is defined and contains the id
+  console.log(req.body)
+  const { title, content, slug, tags, image, category, status, userId } = req.body;
   if (!req.user || !req.user.id) {
     return res.status(401).json({ message: 'Unauthorized: No user found' });
   }
+
   const newBlog = new blog({
     title,
-    description,
-    author,
+    content,
     slug,
     tags,
-    date,
-    updatedAt,
+    image,
+    category,
     status,
-    user: req.user.id, // Attach the user ID from the authentication middleware
+    userId: req.user.id, 
   });
   try {
     const blogSaved = await newBlog.save();
@@ -37,7 +36,9 @@ export const createBlog = async (req, res) => {
 export const getblog = async(req,res)=>{
   const blogId = await blog.findById(req.params.id)
   if(!blogId) res.send(404).json({message:'The blog doesnt exist'})
-  res.json(blogId)
+    console.log(blogId)
+    res.json(blogId)
+
 }
 
 export const getBlogs = async (req,res)=>{

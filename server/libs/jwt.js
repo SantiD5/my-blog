@@ -1,22 +1,20 @@
 import jwt from 'jsonwebtoken';
 import TOKEN_SECRET from '../config/config.js';
-export default function createAccessToken(payload){
-  return new Promise((resolve,reject)=>{
+
+export default function createAccessToken(payload) {
+  return new Promise((resolve, reject) => {
     jwt.sign(
       payload,
       TOKEN_SECRET,
       {
-        expiresIn:"1d"
+        expiresIn: "1d"
       },
-      (err,token)=>{
-        if(err) {
-       reject(err);
+      (err, token) => {
+        if (err) {
+          return reject(err); // Asegúrate de rechazar la promesa si hay un error
+        }
+        resolve(token); // Resuelve la promesa con el token
       }
-      resolve(token)
-      
-      }
-    
-    )
-  })
- 
+    );
+  });
 }

@@ -1,48 +1,31 @@
 
 import { z } from 'zod';
-const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 export const zodblogSchema = z.object({
-  title: z.string({
-    required_error: 'Title is required',
-  }).trim().min(1, {
-    message: 'Title cannot be empty',
-  }),
+  userId: z.string()
+    .trim()
+    .min(1, "User ID is required"),
   
-  slug: z.string({
-    required_error: 'Slug is required',
-  }).regex(slugRegex, {
-    message: 'Slug must be lowercase, hyphenated words, and can only contain letters, numbers, and hyphens.',
-  }).trim().min(1, {
-    message: 'Slug cannot be empty',
-  }),
+  content: z.string()
+    .trim()
+    .min(1, "Content is required"),
   
-  description: z.string({
-    required_error: 'Description is required',
-  }).min(1, {
-    message: 'Description cannot be empty',
-  }),
+  title: z.string()
+    .trim()
+    .min(1, "Title is required")
+    .max(255, "Title must be at most 255 characters long"),
   
-  author: z.string({
-    required_error: 'Author is required',
-  }).min(1, {
-    message: 'Author cannot be empty',
-  }),
+  image: z.string()
+    .url("Invalid URL format") // Optional: Validate that the image is a valid URL
+    .default('https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png'),
   
-  tags: z.array(z.string().min(1, {
-    message: 'Tags cannot be empty',
-  })).optional(), // Tags are optional, but if provided, must be non-empty strings
+  category: z.string()
+    .trim()
+    .default('uncategorized'),
   
-  date: z.date().optional(), // Date is optional
-  updatedAt: z.date().optional(), // Updated date is optional
-  status: z.enum(['draft', 'published'], {
-    required_error: 'Status is required',
-  }).default('draft'), // Default is 'draft'
-  
-  user: z.string({
-    required_error: 'User ID is required',
-  }).min(1, {
-    message: 'User ID cannot be empty',
-  }),
+  slug: z.string()
+    .trim()
+    .min(1, "Slug is required")
+    .max(255, "Slug must be at most 255 characters long"),
 });
 
 

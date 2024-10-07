@@ -1,9 +1,13 @@
 import { FaGithub, FaSearch, FaTwitter } from "react-icons/fa";
 import { GoSun } from "react-icons/go";
 import { NavLink } from 'react-router-dom';
+
+import { useAuth } from "../../context/authContext";
 import './navbar.css';
 
 export const Navbar = () => {
+  const {isAuthenticated} = useAuth()
+
   return (
     <>
     <nav className='header-nav'>
@@ -37,9 +41,13 @@ export const Navbar = () => {
           <li className="ul-li">
             <NavLink className="li-button">Subscribe</NavLink>
           </li>
-          <li>
+          {
+            !isAuthenticated ?  <li>
             <NavLink to='/login' className="links">Sign In</NavLink>
-          </li>
+          </li> : <NavLink to='/profile' className="links">Profile</NavLink>
+
+          }
+          
         </div>
       </ul>
     </nav>
