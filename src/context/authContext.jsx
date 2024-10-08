@@ -1,6 +1,6 @@
 import cookie from 'js-cookie';
 import { createContext, useContext, useEffect, useState } from "react";
-import { loginRequest, signUpRequest, verifyTokenRequest } from "../Api/Auth";
+import { loginRequest, LogoutRequest, signUpRequest, verifyTokenRequest } from "../Api/Auth";
 export const AuthContext = createContext()
 
 export const useAuth = () =>{
@@ -14,6 +14,7 @@ export const useAuth = () =>{
 export const AuthProvider = ({children}) =>{
   const [user,setUser] = useState(null)
   const [isAuthenticated,setIsAuthenticated] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [errors,setErrors] = useState([])
   const [loading,setLoading] = useState(true)
   const signUp = async (user) => {
@@ -39,6 +40,16 @@ export const AuthProvider = ({children}) =>{
       setErrors(e.response.data)
     }
     setErrors([e.response.data.message])
+    }
+  }
+  const logOut = async(user)=>{
+    try{
+      const res = await LogoutRequest(user)
+      console.log(res)
+      setIsAuthenticated(false)
+      setUser(null)
+    }catch(e){
+      console.log(e)
     }
   }
 
@@ -73,7 +84,7 @@ export const AuthProvider = ({children}) =>{
       checkLogin();
     },[])
   return(
-    <AuthContext.Provider value = {{loading,signUp,user,useAuth,isAuthenticated,errors,setErrors,login}}>
+    <AuthContext.Provider value = {{logOut,loading,signUp,user,useAuth,isAuthenticated,errors,setErrors,login}}>
     {children}
     </AuthContext.Provider>
   )

@@ -54,6 +54,8 @@ export const Login = () => {
             {...register("email", { required: true })}
             type="email"
             placeholder="Email"
+            className="text-black"
+
           />
           {errors.email && <p style={{ color: "red" }}>Email is required</p>}
 
@@ -61,7 +63,9 @@ export const Login = () => {
             {...register("password", { required: true })}
             type="password"
             placeholder="Password"
-          />
+       
+            className="text-black"
+/>
           {errors.password && (
             <p style={{ color: "red" }}>{errors.password.message}</p>
           )}

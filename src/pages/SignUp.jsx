@@ -48,18 +48,23 @@ export const SignUp = () => {
             {...register("username", { required: true })}
             type="text"
             placeholder="Username"
+            className="text-black"
           />
           {errors.username && <p>Username is required</p>}
           <input
             {...register("email", { required: true })}
             type="email"
             placeholder="Email"
+            className="text-black"
+
           />
           {errors.email && <p>Email is required</p>}
           <input
             {...register("password", { required: true })}
             type="password"
             placeholder="Password"
+            className="text-black"
+
           />
           {errors.password && <p>Password is required</p>}
           <button type="Submit">Sign Up</button>

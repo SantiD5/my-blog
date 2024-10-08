@@ -85,6 +85,21 @@ export const profile =  async (req,res)=>{
   })  
 };
 
+export const getAdmin = async (req, res) => {
+  try {
+    const userFound = await User.findById(req.user.id);
+    if (!userFound) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (userFound.role == 'admin') {
+      res.json({ message: 'Welcome to the Admin Dashboard!' });
+    }
+    return res.status(403).json({ message: 'Access denied. Admins only.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 export const verifyToken = async (req, res) => {
   const { token } = req.cookies;
   if (!token) return res.status(400).json({ message: "unauthorized" });
@@ -101,6 +116,11 @@ export const verifyToken = async (req, res) => {
       id: userFound._id,
       username: userFound.username,
       email: userFound.email,
+      role: userFound.role,
+      avatar:userFound.avatar,
+      bookmarks:userFound.bookmarks,
+      createdAt:userFound.createdAt,
+      
     });
   });
 };

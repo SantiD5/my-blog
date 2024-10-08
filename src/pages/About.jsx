@@ -2,7 +2,8 @@ import '../Styles/About.css';
 import ProfilePic from '../assets/Profile.png';
 export const About = () =>{
   return(
-    <div className="about-container">
+    <body className='bg-gray-800'>
+      <div className="about-container ">
     <h1>About Me</h1>
     <img src={ProfilePic} alt="Profile picture" />
     <p>
@@ -20,5 +21,7 @@ export const About = () =>{
       Thanks for stopping by!
     </p>
   </div>
+    </body>
+    
   );
 }

@@ -5,3 +5,7 @@ export const signUpRequest = user => instancia.post(`${API}/signup`,user)
 export const loginRequest = user => instancia.post(`${API}/login`,user)
 
 export const verifyTokenRequest = () => instancia.get(`${API}/verify`)
+
+export const LogoutRequest = user => instancia.post(`${API}/logout`,user)
+
+export const isAdminRequest = user => instancia.post(`${API}/dashboard`,user)

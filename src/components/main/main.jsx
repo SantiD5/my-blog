@@ -29,7 +29,8 @@ export const Main = () => {
     });
   };
   return (
-    <div className="main">
+    <body className='bg-gray-800'>
+      <div className="main ">
       {blogs && blogs.length > 0 ? (
         blogs
           .filter(blog => !blog.draft) // Filter out drafts
@@ -50,5 +51,7 @@ export const Main = () => {
         <p>No blogs available.</p>
       )}
     </div>
+    </body>
+    
   );
 };

@@ -3,7 +3,8 @@ import './Card.css';
 
 export const Card = ({ id, date, category, minutes, img = '/src/assets/Profile.jpeg', title }) => {
   return (
-    <article className="main-card">
+    <body className='bg-gray-800'>
+       <article className="main-card">
       <a href="">
         <img src={img} alt={`Image for ${category}`} />
       </a>
@@ -18,5 +19,7 @@ export const Card = ({ id, date, category, minutes, img = '/src/assets/Profile.j
       <p>este es el id{console.log(id)}</p>
       <Link to={`/gblogs/${id}`}>Read More</Link>    
       </article>
+    </body>
+   
   );
 };

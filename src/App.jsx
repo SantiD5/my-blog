@@ -6,6 +6,7 @@ import { Navbar } from './components/navbar/navbar.jsx';
 import { AuthProvider } from './context/authContext.jsx';
 import { BlogProvider } from './context/blogContext.jsx';
 import { About } from './pages/About.jsx';
+import { Account } from './pages/Account.jsx';
 import { Login } from './pages/Login.jsx';
 import { SignUp } from './pages/SignUp.jsx';
 import { Blog } from './pages/blog.jsx';
@@ -30,6 +31,8 @@ function App() {
 
         <Route element={<ProtectedRoutes/>}>
           <Route path="/blogs/" element={<Dashboard />} />
+          <Route path="/dashboard/" element={<Dashboard />} />
+          <Route path="/account/" element={<Account />} />
 
         </Route>
       </Routes>
