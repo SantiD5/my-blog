@@ -1,10 +1,6 @@
 
 import { z } from 'zod';
 export const zodblogSchema = z.object({
-  userId: z.string()
-    .trim()
-    .min(1, "User ID is required"),
-  
   content: z.string()
     .trim()
     .min(1, "Content is required"),
@@ -15,7 +11,6 @@ export const zodblogSchema = z.object({
     .max(255, "Title must be at most 255 characters long"),
   
   image: z.string()
-    .url("Invalid URL format") // Optional: Validate that the image is a valid URL
     .default('https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png'),
   
   category: z.string()

@@ -2,8 +2,12 @@ import mongoose from 'mongoose';
 
 export const blogSchema = new mongoose.Schema({
   userId: {
-    type: String,
-    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',  // Reference to the User model
+  },
+  description:{
+    type:String,
+    required:true
   },
   content: {
     type: String,

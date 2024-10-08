@@ -2,13 +2,14 @@ import blog from '../models/blog.model.js';
 
 export const createBlog = async (req, res) => {
   console.log(req.body)
-  const { title, content, slug, tags, image, category, status, userId } = req.body;
+  const { title, content, slug, tags, image, category, status,description } = req.body;
   if (!req.user || !req.user.id) {
     return res.status(401).json({ message: 'Unauthorized: No user found' });
   }
 
   const newBlog = new blog({
     title,
+    description,
     content,
     slug,
     tags,

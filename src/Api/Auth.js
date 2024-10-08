@@ -8,4 +8,4 @@ export const verifyTokenRequest = () => instancia.get(`${API}/verify`)
 
 export const LogoutRequest = user => instancia.post(`${API}/logout`,user)
 
-export const isAdminRequest = user => instancia.post(`${API}/dashboard`,user)
+export const isAdminRequest = user => instancia.get(`${API}/dashboard`,user)

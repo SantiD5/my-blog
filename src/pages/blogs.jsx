@@ -17,15 +17,19 @@ export const Blogs = () => {
     
     fetchBlogs();
   }, [getBlogs]);
-  
+  console.log(blogs)
 
   return (
     <>
       {blogs && blogs.length > 0 ? (
         blogs.map((blog) => (
           <>
-          <p key={blog.id}>This is the title {blog.title}</p>
+          <h1 key={blog.id}>This is the title {blog.title}</h1>
+          <p key={blog.id}>this is the description{blog.category}</p>
+          <p key={blog.id}>this is the description{blog.content}</p>
           <p key={blog.id}>this is the description{blog.description}</p>
+ 
+
           </>
           
         ))

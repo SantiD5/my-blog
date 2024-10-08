@@ -59,12 +59,15 @@ export const login = async (req,res) =>{
      email:userFound.email,
      createdAt:userFound.createdAt,
      updatedAt:userFound.updatedAt,
+     role:userFound.role,
+     booksmarks:userFound.bookmarks,
+     isVerifiedu:userFound.isVerified,
+     permissions:userFound.permissions
     });
   }catch(e){
    console.log(e);
   }
  }
-
 
 export const logout = (req,res) => {
   res.cookie('token'," ",{

@@ -1,6 +1,6 @@
 import cookie from 'js-cookie';
 import { createContext, useContext, useEffect, useState } from "react";
-import { loginRequest, LogoutRequest, signUpRequest, verifyTokenRequest } from "../Api/Auth";
+import { isAdminRequest, loginRequest, LogoutRequest, signUpRequest, verifyTokenRequest } from "../Api/Auth";
 export const AuthContext = createContext()
 
 export const useAuth = () =>{
@@ -35,6 +35,7 @@ export const AuthProvider = ({children}) =>{
       const res = await loginRequest(user)
       setIsAuthenticated(true)
       setUser(res.data)
+      setIsAdmin(res.data.role == 'admin'); 
     }catch(e){
       if(Array.isArray(e.response.data)){ 
       setErrors(e.response.data)
@@ -45,13 +46,28 @@ export const AuthProvider = ({children}) =>{
   const logOut = async(user)=>{
     try{
       const res = await LogoutRequest(user)
-      console.log(res)
+      console.log(JSON.stringify(res))
       setIsAuthenticated(false)
       setUser(null)
+      setIsAdmin(false)
     }catch(e){
       console.log(e)
     }
   }
+
+  const Admin = async (token) => {
+    try {
+      const res = await isAdminRequest(token); // Pass the token
+      if (res.data.isAdmin) {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsAdmin(false); // Default to false in case of error
+    }
+  };
 
   useEffect(()=>{
     async function checkLogin (){
@@ -71,12 +87,17 @@ export const AuthProvider = ({children}) =>{
           }
             setIsAuthenticated(true)
             setUser(res.data)
+            console.log(res.data)
+            console.log(res.data.role)
+            setIsAdmin(res.data.role === 'admin'); 
             setLoading(false)
-            console.log(res)
+            console.log(`ES ADMIN? ${isAdmin}`)
+
         }catch(e){
           console.log(e)
           setIsAuthenticated(false);
           setUser(null);
+          setIsAdmin(false);
           setLoading(false)
 
         }
@@ -84,7 +105,7 @@ export const AuthProvider = ({children}) =>{
       checkLogin();
     },[])
   return(
-    <AuthContext.Provider value = {{logOut,loading,signUp,user,useAuth,isAuthenticated,errors,setErrors,login}}>
+    <AuthContext.Provider value = {{isAdmin,logOut,loading,signUp,user,useAuth,isAuthenticated,errors,setErrors,login}}>
     {children}
     </AuthContext.Provider>
   )
