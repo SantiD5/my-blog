@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Reader } from '../components/Reader/Reader';
 import { useBlog } from '../context/blogContext';
 
 export const Blog = () => {
@@ -10,6 +11,7 @@ export const Blog = () => {
   const [error, setError] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [content, setContent] = useState('<p>Loading...</p>'); // Default content
 
   // Fetch blog post when the component mounts
   useEffect(() => {
@@ -38,12 +40,26 @@ export const Blog = () => {
       // Optionally, make an API call to save the comment in your database
     }
   };
+  
+  useEffect(() => {
+    const handleContentChange = (post) => {
+      setContent(post.content); // Update the state with the new content
+    };
+    if (blogPost) {
+      handleContentChange(blogPost);
+    }
+  }, [blogPost]);
+  
 
   return (
-    <div className="bg-gray-800 container mx-auto px-4 py-8 w-full max-w-5xl">
+    <body className='bg-gray-800'>
+       <div className="bg-gray-800 container mx-auto px-4 py-8 w-full max-w-5xl">
+
+{/* Render the editor with the updated content */}
       {/* Blog post content */}
       <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
         {/* Blog Title */}
+
         <h1 className="text-4xl font-semibold text-gray-900 p-6 border-b border-gray-200">
           {loading ? 'Loading...' : blogPost ? blogPost.title : 'Blog Not Found'}
         </h1>
@@ -75,9 +91,8 @@ export const Blog = () => {
                 )}
 
                 {/* Blog Post Content */}
-                <p className="text-gray-800 mb-4 text-lg leading-relaxed">
-                  {blogPost.content}
-                </p>
+                <Reader content={content} />
+
 
                 {/* Blog Slug */}
                 <p className="text-gray-600 mb-4">
@@ -130,5 +145,8 @@ export const Blog = () => {
       {/* Error Handling */}
       {error && <div className="bg-red-100 text-red-700 p-4 text-center mt-8">{error}</div>}
     </div>
+
+    </body>
+   
   );
 };
