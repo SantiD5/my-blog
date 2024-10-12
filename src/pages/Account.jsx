@@ -35,6 +35,7 @@ export const Account = () => {
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
+    console.log(username)
   };
 
   const handleEmailChange = (e) => {

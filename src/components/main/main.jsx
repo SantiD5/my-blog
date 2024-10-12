@@ -15,11 +15,13 @@ export const Main = () => {
         if (res && res.data) {
           setBlogs(res.data);  // Update blogs if the fetch is successful
         }
+
       } catch (err) {
         console.error('Error fetching blogs:', err);
         setError('Error fetching blogs. Please try again later.');  // Set error message
       } finally {
         setLoading(false);  // Set loading to false after the fetch attempt
+        
       }
     };
 
@@ -42,7 +44,7 @@ export const Main = () => {
               <p className="text-red-500">{error}</p>
             ) : blogs && blogs.length > 0 ? (
               blogs
-                .filter(blog => !blog.draft) // Filtering out drafts
+                .filter(blog => !blog.isDraft) // Filtering out drafts
                 .map(blog => (
                   <Card
                     key={blog._id}

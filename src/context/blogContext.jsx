@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useState } from "react";
-import { createBlogsRequest, getBlogRequest, getBlogsRequest } from "../Api/Blog";
+import { createBlogsRequest, deleteBlogRequest, getBlogRequest, getBlogsRequest } from "../Api/Blog";
 
 const BlogContext = createContext();
 
@@ -37,8 +37,17 @@ export const BlogProvider = ({ children }) => {
     console.log(res);
   };
 
+  const deleteBlogById = async(id) =>{
+    try{
+      const response = await deleteBlogRequest(id);
+      setBlogs(response.data)
+    }catch(e){
+      console.log(e)
+    }
+  }
+
   return (
-    <BlogContext.Provider value={{ createBlog, blogs, setBlogs, getBlogs,getBlogById }}>
+    <BlogContext.Provider value={{ createBlog, blogs, setBlogs, getBlogs,getBlogById,deleteBlogById }}>
       {children}
     </BlogContext.Provider>
   );

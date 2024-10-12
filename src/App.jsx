@@ -7,19 +7,20 @@ import { AuthProvider } from './context/authContext.jsx';
 import { BlogProvider } from './context/blogContext.jsx';
 import { About } from './pages/About.jsx';
 import { Account } from './pages/Account.jsx';
-import { Bookmarks } from './pages/Bookmarks.jsx';
-import { Login } from './pages/Login.jsx';
-import { SignUp } from './pages/SignUp.jsx';
 import { Blog } from './pages/blog.jsx';
 import { Blogs } from './pages/blogs.jsx';
-import { Dashboard } from './pages/dashboard.jsx';
+import { Bookmarks } from './pages/Bookmarks.jsx';
+import { Dashboard } from './pages/Dashboard.jsx';
+import { Login } from './pages/Login.jsx';
+import { SignUp } from './pages/SignUp.jsx';
 import { ProtectedRoutes } from './protectedRoutes.jsx';
 
     
 function App() {
   return (
-
-  <AuthProvider>
+    <body className='bg-gray-800'>
+      
+      <AuthProvider>
       <BlogProvider>
 
        <Navbar />
@@ -49,6 +50,8 @@ function App() {
       <Footer/>
       </BlogProvider>
     </AuthProvider>
+    </body>
+ 
     )
 }
 

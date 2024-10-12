@@ -1,4 +1,3 @@
-/* Scoped to the editor */
 
 .notion-editor {
   background-color: #f8f9fa;
@@ -11,38 +10,12 @@
 }
 
 /* Paragraph styling */
-.notion-paragraph {
+.tiptap .notion-paragraph {
   margin-bottom: 16px;
   font-size: 16px;
   color: #333;
 }
 
-/* Toolbar styling */
-.toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  max-width: 800px;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.toolbar button {
-  padding: 8px 12px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.toolbar button.active {
-  background-color: #007bff;
-  color: white;
-}
-
-.toolbar button:hover {
-  background-color: #e9ecef;
-}
-/* .tiptap class styles */
 .tiptap {
   background-color: #ffffff;
   border: 1px solid #dcdcdc;
@@ -58,30 +31,14 @@
   transition: border-color 0.3s ease;
 }
 
-/* Añadir un estilo cuando el editor esté enfocado */
 .tiptap:focus {
   border-color: #0056b3;
   box-shadow: 0 2px 5px rgba(0, 86, 179, 0.3);
 }
 
-/* Opcional: Añadir estilo de cursor y selección de texto */
 .tiptap ::selection {
   background-color: #b3d4fc;
   color: #000;
-}
-
-/* Para la barra de desplazamiento (scroll) */
-.tiptap::-webkit-scrollbar {
-  width: 8px;
-}
-
-.tiptap::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 10px;
-}
-
-.tiptap::-webkit-scrollbar-thumb:hover {
-  background-color: #aaa;
 }
 
 /* Headings */
@@ -122,20 +79,15 @@
   font-family: monospace;
 }
 .tiptap pre {
-  background-color: #f1f1f1; /* Fondo del bloque */
-  padding: 16px; /* Espacio alrededor del contenido */
-  border-radius: 8px; /* Bordes redondeados */
-  font-family: monospace; /* Fuente monospace */
-  overflow-x: auto; /* Permite desplazarse horizontalmente si el contenido es muy largo */
-  margin-bottom: 16px; /* Espacio debajo del bloque */
-  white-space: pre-wrap; /* Mantiene el formato original, incluyendo espacios */
+  background-color: #f1f1f1; 
+  padding: 16px; 
+  border-radius: 8px;
+  font-family: monospace;
+  overflow-x: auto; 
+  margin-bottom: 16px; 
+  white-space: pre-wrap;
 }
 
-/* Estilo para el texto dentro del bloque de código */
-.tiptap pre code {
-  background-color: transparent; /* Elimina cualquier fondo adicional en el texto */
-  color: #333; /* Color del texto */
-}
 /* Tiptap.css o cualquier archivo CSS */
 .tiptap table {
   width: 100%;
@@ -152,38 +104,31 @@
 }
 /* Bullet List (unordered list) */
 .tiptap ul {
-  list-style-type: disc; /* Viñetas de círculo */
-  padding-left: 20px; /* Espacio a la izquierda */
-  margin-bottom: 16px; /* Espacio debajo de la lista */
+  list-style-type: disc; 
+  padding-left: 20px; 
+  margin-bottom: 16px; 
 }
 
 .tiptap ul li {
-  margin-bottom: 8px; /* Espacio entre los elementos de la lista */
+  margin-bottom: 8px; 
   font-size: 16px;
   color: #333;
 }
 
 /* Ordered List (numbered list) */
 .tiptap ol {
-  padding-left: 20px; /* Espacio a la izquierda */
-  margin-bottom: 16px; /* Espacio debajo de la lista */
+  padding-left: 20px; 
+  margin-bottom: 16px; 
+  list-style: decimal;
+  list-style-position: outside;
 }
 
 .tiptap ol li {
-  margin-bottom: 8px; /* Espacio entre los elementos de la lista */
+  margin-bottom: 8px; 
   font-size: 16px;
   color: #333;
 }
 
-/* Personalización para los números en la lista ordenada */
-.tiptap ol {
-  list-style-type: decimal; /* Números en la lista ordenada */
-}
-
-.tiptap ol li::marker {
-  color: #333;
-  font-weight: bold;
-}
 
 .tiptap a{
   color: #007bff;

@@ -2,7 +2,7 @@ import blog from '../models/blog.model.js';
 
 export const createBlog = async (req, res) => {
   console.log(req.body)
-  const { title, content, slug, tags, image, category, status,description } = req.body;
+  const { title, content, slug, tags, image, category, isDraft ,description } = req.body;
   if (!req.user || !req.user.id) {
     return res.status(401).json({ message: 'Unauthorized: No user found' });
   }
@@ -15,7 +15,7 @@ export const createBlog = async (req, res) => {
     tags,
     image,
     category,
-    status,
+    isDraft,
     userId: req.user.id, 
   });
   try {

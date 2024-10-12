@@ -54,7 +54,7 @@ export const Blog = () => {
   return (
     <body className='bg-gray-800'>
        <div className="bg-gray-800 container mx-auto px-4 py-8 w-full max-w-5xl">
-
+      
 {/* Render the editor with the updated content */}
       {/* Blog post content */}
       <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">

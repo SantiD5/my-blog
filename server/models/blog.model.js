@@ -32,6 +32,10 @@ export const blogSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  isDraft: {
+    type: Boolean,
+    default: true,  // Set default to true, assuming new blogs are drafts
+  }
 },
 { timestamps: true });
 
