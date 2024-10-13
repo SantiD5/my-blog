@@ -1,5 +1,6 @@
+
 import React, { createContext, useCallback, useContext, useState } from "react";
-import { createBlogsRequest, deleteBlogRequest, getBlogRequest, getBlogsRequest } from "../Api/Blog";
+import { createBlogsRequest, deleteBlogRequest, getBlogRequest, getBlogsRequest, updateBlogRequest } from "../Api/Blog";
 
 const BlogContext = createContext();
 
@@ -16,16 +17,16 @@ export const BlogProvider = ({ children }) => {
 
   const getBlogs = useCallback(async () => {
     try {
-      const response = await getBlogsRequest(); 
-      setBlogs(response.data); 
+      const response = await getBlogsRequest();
+      setBlogs(response.data);
     } catch (error) {
       console.error("Error fetching blogs:", error);
     }
-  },[]);
+  }, []);
   const getBlogById = async (id) => {
     try {
-      const response = await getBlogRequest(id); 
-      setBlogs(response.data); 
+      const response = await getBlogRequest(id);
+      setBlogs(response.data);
       return response.data
     } catch (error) {
       console.error("Error fetching blogs:", error);
@@ -36,18 +37,24 @@ export const BlogProvider = ({ children }) => {
     const res = await createBlogsRequest(blog);
     console.log(res);
   };
-
-  const deleteBlogById = async(id) =>{
-    try{
+  const editBlogById = async (id) => {
+    try {
+      const response = await updateBlogRequest(id);
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  const deleteBlogById = async (id) => {
+    try {
       const response = await deleteBlogRequest(id);
       setBlogs(response.data)
-    }catch(e){
+    } catch (e) {
       console.log(e)
     }
   }
 
   return (
-    <BlogContext.Provider value={{ createBlog, blogs, setBlogs, getBlogs,getBlogById,deleteBlogById }}>
+    <BlogContext.Provider value={{ editBlogById, createBlog, blogs, setBlogs, getBlogs, getBlogById, deleteBlogById }}>
       {children}
     </BlogContext.Provider>
   );

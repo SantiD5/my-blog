@@ -42,7 +42,7 @@ export const Reader = ({ content }) => {
       TableCell,
       TableHeader,
     ],
-    content: content || '<h1>Start writing like in Notion!</h1>', // Fallback if no content is provided
+    content: content || '<h1>Error has ocurred!</h1>', // Fallback if no content is provided
     autofocus: true,
     editable: false, // This is a reader, not an editor
   });
@@ -73,5 +73,5 @@ export const Reader = ({ content }) => {
     <div className="editor-wrapper">
       <EditorContent editor={editor} />
     </div>
-  );
+  ); 
 };

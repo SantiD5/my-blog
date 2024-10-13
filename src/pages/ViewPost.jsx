@@ -23,6 +23,7 @@ export const ViewPost = () => {
 
   };
 
+
   useEffect(() => {
     // Fetch post data from API based on the post ID
     const getPosts = async () => {
@@ -41,9 +42,9 @@ export const ViewPost = () => {
     };
 
     getPosts();
-  }, [getBlogs,blogs._id]); // Dependency array with getBlogs
+  }, [getBlogs, blogs._id]); // Dependency array with getBlogs
 
- 
+
   if (loading) {
     return (
       <div className="text-white text-center p-6">
@@ -84,7 +85,7 @@ export const ViewPost = () => {
           <div className="flex space-x-4">
             {/* Edit Button */}
             <Link to={`/edit/${blog._id}`}>
-              <button className="px-4 py-2 text-sm font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors duration-300">
+              <button  className="px-4 py-2 text-sm font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors duration-300">
                 Edit
               </button>
             </Link>
@@ -99,7 +100,7 @@ export const ViewPost = () => {
           </div>
         </div>
       ))}
-      
+
       {/* Back to Blog Link */}
       <div className="mt-8">
         <Link

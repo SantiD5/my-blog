@@ -11,10 +11,10 @@ import { Blog } from './pages/blog.jsx';
 import { Blogs } from './pages/blogs.jsx';
 import { Bookmarks } from './pages/Bookmarks.jsx';
 import { Dashboard } from './pages/Dashboard.jsx';
+import { EditPost } from './pages/Edit.jsx';
 import { Login } from './pages/Login.jsx';
 import { SignUp } from './pages/SignUp.jsx';
 import { ProtectedRoutes } from './protectedRoutes.jsx';
-
     
 function App() {
   return (
@@ -42,6 +42,7 @@ function App() {
      
           <Route element={<AdminRoutes/>}>
           <Route path="/dashboard/" element={<Dashboard />} />
+          <Route path="/edit/:id" element={<EditPost />} />
 
         </Route>
         </Route>

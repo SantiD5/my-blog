@@ -1,61 +1,68 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Link, Navigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Tiptap from '../components/Editor/Editor';
 import { useBlog } from '../context/blogContext';
 
-export const CreatePost = () => {
+export const EditPost = () => {
   const { register, handleSubmit, control, setValue, formState: { errors } } = useForm();
-  const { createBlog } = useBlog();
-  const [isBlogCreated, setIsBlogCreated] = useState(false);
-  const [blogId, setBlogId] = useState('');
-  const [content, setContent] = useState('<p>Loading...</p>'); // Default content
-  const [status, setStatus] = useState('draft'); // Default status
-  let realStatus = status === 'draft' ? true : false
+  const { getBlogById, editBlogById } = useBlog();
+  const { id } = useParams();
+  const [isBlogUpdated, setIsBlogUpdated] = useState(false);
+  const [status, setStatus] = useState('draft');
+  
+  // Initialize content with useState for better reactivity
+  const [content, setContent] = useState('');
+
   useEffect(() => {
-    console.log(realStatus)
-  }, [])
+    const fetchBlog = async () => {
+      try {
+        const blog = await getBlogById(id);
+        if (blog) {
+          setValue('title', blog.title);
+          setValue('slug', blog.slug);
+          setValue('description', blog.description);
+          setValue('category', blog.category);
+          setValue('tags', blog.tags);
+          setContent(JSON.parse(blog.content)); // Set content state
+          setStatus(blog.isDraft ? 'draft' : 'published');
+        }
+      } catch (error) {
+        console.error('Error fetching blog:', error);
+      }
+    };
+    fetchBlog();
+  }, [id, setValue]);
+
   const handleStatusChange = (e) => {
-    const selectedStatus = e.target.value;
-    setStatus(selectedStatus); // Actualiza el estado con el valor seleccionado
-
-    console.log("Selected status:", selectedStatus); // Imprime el valor seleccionado en la consola
-    console.log(realStatus)
+    setStatus(e.target.value);
   };
-  const onSubmit = async (data) => {
-    try {
-      console.log(data.status);
-
-      const contentAsString = JSON.stringify(content); // Convert content to a string
-      console.log(`status antes de la peticion ${realStatus}`)
-      const blogData = await { ...data, content: contentAsString, isDraft: realStatus }; // Add isDraft based on selected status
-
-      const newBlog = await createBlog(blogData); // Pass blogData instead of data
-      console.log(newBlog);
-      console.log(newBlog._id);
-      console.log(newBlog.isDraft);
-
-      setIsBlogCreated(true);
-      setBlogId(newBlog._id); // Save the blog id after successful creation
-    } catch (error) {
-      console.error("Error submitting the form:", error);
-    }
-  };
-
-  // Redirect to the new blog post if it's successfully created
-  if (isBlogCreated) {
-    return <Navigate to={`/gblogs/${blogId}`} />;
-  }
 
   const handleContentChange = (newContent) => {
-    setContent(newContent);
-    setValue('content', newContent);
+    setContent(newContent); // Update local state
+    setValue('content', newContent); // Also update form value
+  };
+  
+
+  const onSubmit = async (data) => {
+    try {
+      const blogData = {
+        ...data,
+        content: JSON.stringify(content), // Use the state content
+        isDraft: status === 'draft',
+      };
+
+      await editBlogById(id, blogData);
+      setIsBlogUpdated(true);
+    } catch (error) {
+      console.error('Error updating the blog:', error);
+    }
   };
 
 
 
   return (
-    <body className='bg-gray-800'>
+    <body className="bg-gray-800">
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-[60%] mx-auto bg-white p-6 rounded-lg shadow-md">
         {/* Title */}
         <div className="mb-4">
@@ -84,16 +91,12 @@ export const CreatePost = () => {
         {/* Content */}
         <div className="mb-4">
           <label htmlFor="content" className="block text-sm font-medium text-gray-700">Content</label>
-          {/* Tiptap Editor using Controller */}
           <Controller
             name="content"
             control={control}
             rules={{ required: 'Content is required' }}
-            render={({ field }) => (
-              <Tiptap
-                value={field.value}
-                onContentChange={handleContentChange}
-              />
+            render={() => (
+              <Tiptap content={content}  onContentChange={handleContentChange} />
             )}
           />
           {errors.content && <p className="text-red-600 text-sm">{errors.content.message}</p>}
@@ -138,23 +141,19 @@ export const CreatePost = () => {
           <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
           <select
             id="status"
-            value={status} // Aseguramos que el valor esté controlado por React
-            onChange={handleStatusChange} // Llama a la función para manejar el cambio
+            value={status}
+            onChange={handleStatusChange}
             className="text-black mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
             <option value="draft">Draft</option>
             <option value="published">Published</option>
           </select>
-          {errors.status && <p className="text-red-600 text-sm">{errors.status.message}</p>}
         </div>
 
         {/* Submit Button */}
-        <Link to={`/gblogs/${blogId}`}>
         <button type="submit" className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:ring-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2">
-          Create Post
+          Edit Post
         </button>
-        </Link>
-       
       </form>
     </body>
   );
