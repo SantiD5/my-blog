@@ -19,7 +19,7 @@ import StarterKit from '@tiptap/starter-kit';
 import React, { useEffect, useState } from 'react';
 import './Editor.css'; // Custom CSS file
 
-const Tiptap = ({ onContentChange, content}) => {
+const Tiptap = ({ onContentChange, content,edit}) => {
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const [alignment, setAlignment] = useState('left');
@@ -55,7 +55,7 @@ const Tiptap = ({ onContentChange, content}) => {
       TableCell,
       TableHeader,
     ],
-    content: content || '<h1>Error has ocurred!</h1>', // Fallback if no content is provided
+    content: content || '<p>write...!</p>', // Fallback if no content is provided
     autofocus: true,
     onUpdate({ editor }) {
       if (!isReadingMode) {
@@ -89,6 +89,7 @@ const Tiptap = ({ onContentChange, content}) => {
     }
   }, [content, editor]);
    const getEditorContent = () => {
+   
     const content = editor.getJSON();  // Get content as JSON
     onContentChange(content);  // Send content to parent or other component
     console.log(content); // Log the JSON content
@@ -210,9 +211,11 @@ const Tiptap = ({ onContentChange, content}) => {
       {/* Get the content on button click */}
       <button 
   className="bg-blue-500 mt-20 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition ease-in-out duration-150"
-  onClick={(event)=>{
+  onClick={(event)=>{ if(edit){
     event.preventDefault()
-    getEditorContent}}>
+  }
+  getEditorContent()
+  }}>
   Save Content
     </button>
     </div>

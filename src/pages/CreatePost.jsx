@@ -1,58 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Link, Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Tiptap from '../components/Editor/Editor';
 import { useBlog } from '../context/blogContext';
 
 export const CreatePost = () => {
   const { register, handleSubmit, control, setValue, formState: { errors } } = useForm();
   const { createBlog } = useBlog();
-  const [isBlogCreated, setIsBlogCreated] = useState(false);
   const [blogId, setBlogId] = useState('');
   const [content, setContent] = useState('<p>Loading...</p>'); // Default content
   const [status, setStatus] = useState('draft'); // Default status
-  let realStatus = status === 'draft' ? true : false
+  const navigate = useNavigate(); // Initialize useNavigate
+  
   useEffect(() => {
-    console.log(realStatus)
-  }, [])
+    console.log(status);
+  }, [status]);
+
   const handleStatusChange = (e) => {
     const selectedStatus = e.target.value;
-    setStatus(selectedStatus); // Actualiza el estado con el valor seleccionado
-
-    console.log("Selected status:", selectedStatus); // Imprime el valor seleccionado en la consola
-    console.log(realStatus)
+    setStatus(selectedStatus); // Update status
+    console.log("Selected status:", selectedStatus);
   };
+
   const onSubmit = async (data) => {
     try {
-      console.log(data.status);
-
       const contentAsString = JSON.stringify(content); // Convert content to a string
-      console.log(`status antes de la peticion ${realStatus}`)
-      const blogData = await { ...data, content: contentAsString, isDraft: realStatus }; // Add isDraft based on selected status
-
+  
+      const blogData = { ...data, content: contentAsString, isDraft: status === 'draft' }; // Use status directly
+  
       const newBlog = await createBlog(blogData); // Pass blogData instead of data
-      console.log(newBlog);
-      console.log(newBlog._id);
-      console.log(newBlog.isDraft);
-
-      setIsBlogCreated(true);
       setBlogId(newBlog._id); // Save the blog id after successful creation
+
+      // Redirect to the new blog post after creation
+      navigate(`/gblogs/${blogId}`);
     } catch (error) {
       console.error("Error submitting the form:", error);
     }
   };
-
-  // Redirect to the new blog post if it's successfully created
-  if (isBlogCreated) {
-    return <Navigate to={`/gblogs/${blogId}`} />;
-  }
-
+  
   const handleContentChange = (newContent) => {
     setContent(newContent);
     setValue('content', newContent);
   };
-
-
 
   return (
     <body className='bg-gray-800'>
@@ -84,7 +73,6 @@ export const CreatePost = () => {
         {/* Content */}
         <div className="mb-4">
           <label htmlFor="content" className="block text-sm font-medium text-gray-700">Content</label>
-          {/* Tiptap Editor using Controller */}
           <Controller
             name="content"
             control={control}
@@ -138,8 +126,8 @@ export const CreatePost = () => {
           <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
           <select
             id="status"
-            value={status} // Aseguramos que el valor esté controlado por React
-            onChange={handleStatusChange} // Llama a la función para manejar el cambio
+            value={status}
+            onChange={handleStatusChange}
             className="text-black mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
             <option value="draft">Draft</option>
@@ -149,12 +137,9 @@ export const CreatePost = () => {
         </div>
 
         {/* Submit Button */}
-        <Link to={`/gblogs/${blogId}`}>
         <button type="submit" className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:ring-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2">
           Create Post
         </button>
-        </Link>
-       
       </form>
     </body>
   );

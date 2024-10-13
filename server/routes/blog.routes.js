@@ -9,7 +9,8 @@ const router = Router()
 router.post('/blogs',authRequired,validateSchema(zodblogSchema),createBlog)
 router.get('/gblogs/:id',getblog)
 router.delete('/blog/:id',authRequired,isAdmin,deleteBlog)
-router.put('/blog/:id',authRequired,isAdmin,updateBlog)
+
+router.patch('/blog/:id',authRequired,isAdmin,updateBlog)
 router.get('/blogs',getBlogs)
 router.get('/dashboard',authRequired,isAdmin)
 

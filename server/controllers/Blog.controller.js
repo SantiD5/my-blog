@@ -57,7 +57,7 @@ export const deleteBlog = async (req,res)=>{
 export const updateBlog = async (req,res)=>{
   const blogId = await blog.findByIdAndUpdate(req.params.id,req.body,{
     new:true
-  })
+})
   if(!blogId) res.send(404).json({message:'Blog not found'})
   res.json(blogId)
   

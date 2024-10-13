@@ -37,11 +37,12 @@ export const BlogProvider = ({ children }) => {
     const res = await createBlogsRequest(blog);
     console.log(res);
   };
-  const editBlogById = async (id) => {
+  const editBlogById = async (id,blog) => {
     try {
-      const response = await updateBlogRequest(id);
+      const response = await updateBlogRequest(id,blog);
+      console.log(response)
     } catch (e) {
-      console.log(e)
+      console.log(`this is the error ${e}`)
     }
   }
   const deleteBlogById = async (id) => {

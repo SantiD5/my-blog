@@ -46,14 +46,17 @@ export const EditPost = () => {
 
   const onSubmit = async (data) => {
     try {
-      const blogData = {
-        ...data,
-        content: JSON.stringify(content), // Use the state content
-        isDraft: status === 'draft',
-      };
+      const contentAsString = JSON.stringify(content); // Convert content to a string
 
-      await editBlogById(id, blogData);
-      setIsBlogUpdated(true);
+      console.log(data); // Aca la data aparece correctamente
+      const blogData = { ...data, content: contentAsString}; // Use status directly
+
+      console.log(`this is the blogdata ${JSON.stringify(blogData)}`); // Aca tambien
+  
+      // No hagas JSON.stringify aquí, simplemente envía blogData
+      const editBlog = await editBlogById(id, blogData); 
+      console.log(editBlog)
+      setIsBlogUpdated(true); // Actualiza el estado para reflejar los cambios
     } catch (error) {
       console.error('Error updating the blog:', error);
     }
@@ -96,7 +99,7 @@ export const EditPost = () => {
             control={control}
             rules={{ required: 'Content is required' }}
             render={() => (
-              <Tiptap content={content}  onContentChange={handleContentChange} />
+              <Tiptap content={content}  onContentChange={handleContentChange} edit={true} />
             )}
           />
           {errors.content && <p className="text-red-600 text-sm">{errors.content.message}</p>}
