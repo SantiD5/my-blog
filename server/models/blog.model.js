@@ -35,7 +35,8 @@ export const blogSchema = new mongoose.Schema({
   isDraft: {
     type: Boolean,
     default: true,  // Set default to true, assuming new blogs are drafts
-  }
+  },
+  comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }], // Reference to comments
 },
 { timestamps: true });
 

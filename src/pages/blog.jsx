@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { CommentSection } from '../components/Comments/comment';
 import { Reader } from '../components/Reader/Reader';
 import { useBlog } from '../context/blogContext';
 
@@ -107,40 +108,7 @@ export const Blog = () => {
       </div>
 
       {/* Comments Section */}
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-        <div className="p-6 border-t border-gray-200">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Comments</h2>
-          <div className="space-y-4">
-            {comments.length ? (
-              comments.map((comment, index) => (
-                <div key={index} className="bg-gray-100 p-4 rounded-lg shadow-sm">
-                  <p className="text-gray-700">{comment.text}</p>
-                  <span className="text-sm text-gray-500">- {comment.author}</span>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500">No comments yet.</p>
-            )}
-          </div>
-
-          {/* Add Comment Form */}
-          <div className="mt-6 flex flex-col">
-            <textarea
-              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
-              placeholder="Add a comment..."
-              rows="4"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-            />
-            <button
-              onClick={handleCommentSubmit}
-              className="mt-4 bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-            >
-              Submit Comment
-            </button>
-          </div>
-        </div>
-      </div>
+      <CommentSection postId={id}/>
 
       {/* Error Handling */}
       {error && <div className="bg-red-100 text-red-700 p-4 text-center mt-8">{error}</div>}
