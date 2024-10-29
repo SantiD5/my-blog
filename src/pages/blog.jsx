@@ -108,7 +108,7 @@ export const Blog = () => {
       </div>
 
       {/* Comments Section */}
-      <CommentSection postId={id}/>
+      <CommentSection blog={id}/>
 
       {/* Error Handling */}
       {error && <div className="bg-red-100 text-red-700 p-4 text-center mt-8">{error}</div>}

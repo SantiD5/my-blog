@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createComment, deleteComment, getComment, getComments, updateComment } from "../controllers/Comment.controller.js";
+import { createComment, deleteComment, getComment, getComments, getLikes, likeComment, updateComment } from "../controllers/Comment.controller.js";
 import { isAdmin } from '../middleware/Admin.js';
 import { authRequired } from "../middleware/validateToken.js";
 const router = Router()
@@ -12,4 +12,6 @@ router.delete('/comment/:id',authRequired,isAdmin,deleteComment)
 router.patch('/comment/:id',authRequired,isAdmin,updateComment)
 router.get('/comments',getComments)
 
+router.patch('/comment/:id/like', authRequired, likeComment)
+router.get('/comment/:id/likes', getLikes)
 export default router

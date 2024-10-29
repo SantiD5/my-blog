@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { useAuth } from "../../context/authContext";
 import { useComment } from "../../context/commentContext";
 
 export const CommentSection = ({ blog }) => {
@@ -11,39 +9,11 @@ export const CommentSection = ({ blog }) => {
     getComments,
     setComment,
     handleLikeComment,
-    reload
+    handleDislikeComment,
   } = useComment();
-  
-  const { user } = useAuth();
   const [newComment, setNewComment] = useState("");
   const [error, setError] = useState("");
-  const [replyContents, setReplyContents] = useState({});
-  const [replyVisible, setReplyVisible] = useState(null); // Estado para controlar la visibilidad del input de respuesta
-
-  const handleLike = async (e, commentId, userId) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.currentTarget) {
-      e.currentTarget.blur();
-    }
-    if (!user) {
-      console.error("User is not authenticated");
-      return;
-    }
-    try {
-      const res = await handleLikeComment(commentId, userId);
-      if (res && res.data) {
-        const { likes } = res.data;
-        setComment((prevComments) =>
-          prevComments.map((comment) =>
-            comment.id === commentId ? { ...comment, likes } : comment
-          )
-        );
-      }
-    } catch (error) {
-      console.error("Error liking the comment:", error);
-    }
-  };
+  const [replyContents, setReplyContents] = useState({}); // Estado para las respuestas
 
   useEffect(() => {
     const gettingComments = async () => {
@@ -51,16 +21,18 @@ export const CommentSection = ({ blog }) => {
         const res = await getComments(blog);
         if (res && res.data) {
           setComment(res.data);
+          console.log(comments)
         }
       } catch (e) {
         console.error(e);
       }
     };
     gettingComments();
-  }, [blog, reload]);
+  }, [blog,handleLike]);
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
+    console.log(e)
     if (!newComment.trim()) {
       setError("El comentario no puede estar vacío");
       return;
@@ -68,7 +40,7 @@ export const CommentSection = ({ blog }) => {
 
     try {
       const newCommentData = await createComment({
-        blogId: blog,
+       blogId: blog,
         content: newComment,
       });
       setNewComment("");
@@ -76,10 +48,31 @@ export const CommentSection = ({ blog }) => {
       setComment((prevComments) => [...prevComments, newCommentData.data]);
     } catch (err) {
       setError("No se pudo enviar el comentario");
-      console.log(err);
     }
   };
 
+ 
+const handleLike = async (e,commentId, userId) => {
+  e.preventDefault();
+  e.stopPropagation();
+if (e.currentTarget) {
+    e.currentTarget.blur();
+  }
+    try {
+    const res = await handleLikeComment(commentId, userId); // Asegúrate de que la función maneje el userId
+    if (res && res.data) {
+      setComment((prevComments) =>
+        prevComments.map((comment) =>
+          comment._id === commentId ? { ...comment, likes: res.data.likes } : comment
+        )
+      );
+
+    }
+
+  } catch (error) {
+    console.error("Error liking the comment:", error);
+  }
+};
   const handleReplyChange = (commentId, value) => {
     setReplyContents((prev) => ({
       ...prev,
@@ -89,12 +82,16 @@ export const CommentSection = ({ blog }) => {
 
   const handleReplySubmit = async (e, commentId) => {
     e.preventDefault();
-    const replyContent = replyContents[commentId];
+    const replyContent = replyContents[commentId]; // Obtener el contenido de la respuesta
     if (!replyContent.trim()) {
       setError("El contenido de la respuesta no puede estar vacío");
       return;
     }
 
+    // Aquí debes manejar la lógica para enviar la respuesta al backend
+    // await createReply(commentId, replyContent);
+
+    // Agregar la respuesta a la lista localmente
     setComment((prevComments) =>
       prevComments.map((comment) =>
         comment.id === commentId
@@ -108,8 +105,7 @@ export const CommentSection = ({ blog }) => {
           : comment
       )
     );
-    setReplyContents((prev) => ({ ...prev, [commentId]: "" }));
-    setReplyVisible(null); // Ocultar el input después de enviar la respuesta
+    setReplyContents((prev) => ({ ...prev, [commentId]: "" })); // Limpiar el contenido de la respuesta
   };
 
   if (loading) return <p>Cargando comentarios...</p>;
@@ -117,59 +113,79 @@ export const CommentSection = ({ blog }) => {
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden">
       <div className="p-6 border-t border-gray-200">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-4">Comentarios</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+          Comentarios
+        </h2>
         <div className="space-y-4">
           {comments.length ? (
             comments.map((comment) => (
-              <div key={comment.id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
+              <div
+                key={comment.id}
+                className="bg-gray-100 p-4 rounded-lg shadow-sm"
+              >
                 <p className="text-gray-700">{comment.content}</p>
-                <span className="text-sm text-gray-500">- {comment.author}</span>
+                <span className="text-sm text-gray-500">
+                  - {comment.author}
+                </span>
 
                 <div className="flex space-x-2 mt-2">
-                  <button
-                    type="button"
-                    onClick={(e) => handleLike(e, comment._id, comment.userId)}
-                  >
-                    {comment.likedBy.includes(user.id) ? <FaHeart /> : <FaRegHeart />}
-                    {comment.likes}
+                  <button type="button" onClick={(e) => handleLike(e,comment._id , comment.userId)}>
+                  ❤️ {comment.likes}
                   </button>
+                 
                   <button
-                    type="button"
-                    onClick={() => setReplyVisible(comment.id)}
+                   type="button" onClick={() =>
+                      setReplyContents((prev) => ({
+                        ...prev,
+                        [comment.id]: "",
+                      }))
+                    }
                   >
                     Responder
                   </button>
                 </div>
 
+                {/* Mostrar respuestas si existen */}
                 {comment.responses && comment.responses.length > 0 && (
                   <div className="ml-4 mt-2">
-                    <h4 className="text-sm font-semibold text-gray-600">Respuestas:</h4>
+                    <h4 className="text-sm font-semibold text-gray-600">
+                      Respuestas:
+                    </h4>
                     {comment.responses.map((response, index) => (
-                      <div key={index} className="bg-gray-50 p-3 rounded-md shadow-sm">
+                      <div
+                        key={index}
+                        className="bg-gray-50 p-3 rounded-md shadow-sm"
+                      >
                         <p className="text-gray-600">{response.content}</p>
-                        <span className="text-sm text-gray-500">- {response.author}</span>
+                        <span className="text-sm text-gray-500">
+                          - {response.author}
+                        </span>
                       </div>
                     ))}
                   </div>
                 )}
 
-                {replyVisible === comment.id && (
-                  <form onSubmit={(e) => handleReplySubmit(e, comment.id)} className="mt-4">
-                    <textarea
-                      className="px-4 py-2 border border-gray-300 rounded-md"
-                      placeholder="Agregar una respuesta..."
-                      rows="2"
-                      value={replyContents[comment.id] || ""}
-                      onChange={(e) => handleReplyChange(comment.id, e.target.value)}
-                    />
-                    <button
-                      type="submit"
-                      className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md"
-                    >
-                      Enviar Respuesta
-                    </button>
-                  </form>
-                )}
+                {/* Formulario para responder a un comentario */}
+                <form
+                  onSubmit={(e) => handleReplySubmit(e, comment._id)}
+                  className="mt-4"
+                >
+                  <textarea
+                    className="px-4 py-2 border border-gray-300 rounded-md"
+                    placeholder="Agregar una respuesta..."
+                    rows="2"
+                    value={replyContents[comment.id] || ""}
+                    onChange={(e) =>
+                      handleReplyChange(comment.id, e.target.value)
+                    }
+                  />
+                  <button
+                    type="submit"
+                    className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md"
+                  >
+                    Enviar Respuesta
+                  </button>
+                </form>
               </div>
             ))
           ) : (
@@ -178,6 +194,7 @@ export const CommentSection = ({ blog }) => {
         </div>
       </div>
 
+      {/* Formulario para agregar comentarios */}
       {error && <p className="text-red-500">{error}</p>}
       <div className="mt-6 flex flex-col">
         <textarea

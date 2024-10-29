@@ -8,6 +8,8 @@ const CommentSchema = new mongoose.Schema({
   content: { type: String, required: true },
   likes: { type: Number, default: 0 },
   dislikes: { type: Number, default: 0 },
+  likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  dislikedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   responses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
   edited: { type: Boolean, default: false },
   parentId: { type: mongoose.Schema.Types.ObjectId, ref: "Comment", default: null }, // Comentario padre

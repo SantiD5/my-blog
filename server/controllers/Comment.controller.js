@@ -136,3 +136,50 @@ export const updateComment = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+// controllers/commentController.js
+
+export const likeComment = async (req, res) => {
+  try {
+    const commentId = req.params.id;
+    const userId = req.user.id; // Supongamos que tienes el ID del usuario en req.user
+    console.log(`userId: ${userId}`)
+    console.log(commentId)
+    console.log(`${JSON.stringify(req.user.id)}`)
+    // Busca el comentario
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Verifica si el usuario ya ha dado like
+    if (comment.likedBy.includes(userId)) {
+      // Si ya dio like, quita el like
+      comment.likes--;
+      comment.likedBy = comment.likedBy.filter(id => id.toString() !== userId.toString());
+    } else {
+      // Si no ha dado like, añádelo y aumenta el contador
+      comment.likes++;
+      comment.likedBy.push(userId);
+    }
+
+    await comment.save(); // Guarda los cambios
+    res.json({ message: "Like updated successfully", likes: comment.likes , likedBy:comment.likedBy});
+  } catch (e) {
+    console.error("Error updating comment", e);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+export const getLikes = async (req,res) =>{
+  const {postId} = req.query;
+  if(!postId){
+    return res.status(400).json({message:"PostId not found"})
+  }
+  try{
+
+  }catch(e){
+    console.error(e)
+  }
+}

@@ -7,3 +7,4 @@ export const deleteCommentRequest = (id) => instancia.delete(`${API}/comment/${i
 export const updateCommentRequest = (id, comment) => instancia.patch(`${API}/comment/${id}`, comment)
 
 
+export const likeComment = (id, likes) => instancia.patch(`${API}/comment/${id}/like`, { likes });
