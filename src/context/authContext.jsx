@@ -1,6 +1,6 @@
 import cookie from 'js-cookie';
 import { createContext, useContext, useEffect, useState } from "react";
-import { isAdminRequest, loginRequest, LogoutRequest, signUpRequest, verifyTokenRequest } from "../Api/Auth";
+import { getUserById, isAdminRequest, loginRequest, LogoutRequest, signUpRequest, verifyTokenRequest } from "../Api/Auth";
 export const AuthContext = createContext()
 
 export const useAuth = () =>{
@@ -13,6 +13,8 @@ export const useAuth = () =>{
 
 export const AuthProvider = ({children}) =>{
   const [user,setUser] = useState(null)
+  const [userById,setUserById] = useState(null)
+
   const [isAuthenticated,setIsAuthenticated] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [errors,setErrors] = useState([])
@@ -68,7 +70,16 @@ export const AuthProvider = ({children}) =>{
       setIsAdmin(false); // Default to false in case of error
     }
   };
-
+  const getUserByid = async(id)=> {
+    try{
+      const res = await getUserById(id)
+      if(res.data){
+        setUserById(res.data)
+      }
+    }catch(e){
+      console.log(e)
+    }
+  }
   useEffect(()=>{
     async function checkLogin (){
       const cookies = cookie.get()
@@ -104,8 +115,10 @@ export const AuthProvider = ({children}) =>{
       }
       checkLogin();
     },[])
+
+  
   return(
-    <AuthContext.Provider value = {{isAdmin,logOut,loading,signUp,user,useAuth,isAuthenticated,errors,setErrors,login}}>
+    <AuthContext.Provider value = {{getUserByid,userById,setUserById,isAdmin,logOut,loading,signUp,user,useAuth,isAuthenticated,errors,setErrors,login}}>
     {children}
     </AuthContext.Provider>
   )

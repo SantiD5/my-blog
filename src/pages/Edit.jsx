@@ -10,9 +10,7 @@ export const EditPost = () => {
   const { id } = useParams();
   const [isBlogUpdated, setIsBlogUpdated] = useState(false);
   const [status, setStatus] = useState('draft');
-  
-  // Initialize content with useState for better reactivity
-  const [content, setContent] = useState('');
+    const [content, setContent] = useState('');
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -39,24 +37,22 @@ export const EditPost = () => {
   };
 
   const handleContentChange = (newContent) => {
-    setContent(newContent); // Update local state
-    setValue('content', newContent); // Also update form value
+    setContent(newContent);
+    setValue('content', newContent); 
   };
   
 
   const onSubmit = async (data) => {
     try {
-      const contentAsString = JSON.stringify(content); // Convert content to a string
+      const contentAsString = JSON.stringify(content);
 
-      console.log(data); // Aca la data aparece correctamente
-      const blogData = { ...data, content: contentAsString}; // Use status directly
+      console.log(data); 
+      const blogData = { ...data, content: contentAsString}; 
 
-      console.log(`this is the blogdata ${JSON.stringify(blogData)}`); // Aca tambien
-  
-      // No hagas JSON.stringify aquí, simplemente envía blogData
-      const editBlog = await editBlogById(id, blogData); 
+      console.log(`this is the blogdata ${JSON.stringify(blogData)}`); 
+        const editBlog = await editBlogById(id, blogData); 
       console.log(editBlog)
-      setIsBlogUpdated(true); // Actualiza el estado para reflejar los cambios
+      setIsBlogUpdated(true); 
     } catch (error) {
       console.error('Error updating the blog:', error);
     }

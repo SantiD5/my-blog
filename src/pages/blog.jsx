@@ -20,8 +20,8 @@ export const Blog = () => {
       setLoading(true);
       try {
         const res = await getBlogById(id); // Call the context function with the ID
-        setBlogPost(res); // Assuming res contains the blog post data
-        setComments(res.comments || []); // Assuming the blog has a comments array
+        setBlogPost(res); 
+        setComments(res.comments || []);
       } catch (e) {
         setError('Error fetching the blog post.');
         console.error(e);
@@ -38,7 +38,6 @@ export const Blog = () => {
       const newComments = [...comments, { text: newComment, author: 'Anonymous' }];
       setComments(newComments);
       setNewComment('');
-      // Optionally, make an API call to save the comment in your database
     }
   };
   

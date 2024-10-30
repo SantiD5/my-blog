@@ -127,3 +127,14 @@ export const verifyToken = async (req, res) => {
     });
   });
 };
+
+export const getUserById = async(req,res) =>{
+  const {id} = req.params
+  const userFound = await User.findById(id)
+  if(!userFound) res.send(400).json({message:'user not found'})
+    return res.json({
+      id:userFound._id,
+      email:userFound.email,
+      username:userFound.username,
+    }) 
+}

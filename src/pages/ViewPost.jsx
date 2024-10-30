@@ -18,26 +18,25 @@ export const ViewPost = () => {
       }
     } catch (e) {
       console.log(e);
-      setError(e); // Set error to the actual error object
+      setError(e); 
     } finally {
-      setLoading(false); // Set loading to false after data is fetched
+      setLoading(false); 
     }
   };
 
   useEffect(() => {
-    // Fetch post data from API based on the post ID
     const getPosts = async () => {
       try {
         const res = await getBlogs();
         console.log(res);
         if (res && res.data) {
-          setBlogs(res.data); // Update the state with the fetched blogs
+          setBlogs(res.data); 
         }
       } catch (e) {
         console.log(e);
-        setError(e); // Set error to the caught error object
+        setError(e);
       } finally {
-        setLoading(false); // Set loading to false after data is fetched
+        setLoading(false); 
       }
     };
 

@@ -65,7 +65,6 @@ export const Account = () => {
   };
 
   const handleUpdatePassword = () => {
-    // Add the logic to update password
     if (newPassword === confirmPassword) {
       console.log("Password updated successfully");
       setIsEditingPassword(false);

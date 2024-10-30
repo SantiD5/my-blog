@@ -24,7 +24,7 @@ export const CreatePost = () => {
 
   const onSubmit = async (data) => {
     try {
-      const contentAsString = JSON.stringify(content); // Convert content to a string
+      const contentAsString = JSON.stringify(content);
   
       const blogData = { ...data, content: contentAsString, isDraft: status === 'draft' }; // Use status directly
   

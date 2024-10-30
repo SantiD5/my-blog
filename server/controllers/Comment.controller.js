@@ -77,7 +77,22 @@ export const getComment = async (req, res) => {
   }
 };
 
-// Get comments by blog post ID
+// Función para obtener las respuestas de un comentario
+const getCommentResponses = async (commentId) => {
+  const responses = await Comment.find({ parentId: commentId })
+    .populate('userId', 'name')
+    .exec();
+  
+  // Para cada respuesta, busca sus propias respuestas recursivamente
+  const responsesWithNested = await Promise.all(responses.map(async (response) => {
+    response = response.toObject(); // Convierte a objeto
+    response.responses = await getCommentResponses(response._id); // Llama recursivamente
+    return response;
+  }));
+
+  return responsesWithNested;
+};
+
 export const getComments = async (req, res) => {
   const { postId } = req.query;
   if (!postId) {
@@ -85,22 +100,24 @@ export const getComments = async (req, res) => {
   }
 
   try {
-    const comments = await Comment.find({ blog: postId , parentId: null})
+    // Obtener solo los comentarios principales
+    const comments = await Comment.find({ blog: postId, parentId: null })
       .populate('userId', 'name')
-      .populate('responses')
       .exec();
 
-    const uniqueComments = Array.from(new Set(comments.map(comment => comment._id.toString())))
-      .map(id => comments.find(comment => comment._id.toString() === id));
+    // Para cada comentario, obtener sus respuestas
+    const commentsWithResponses = await Promise.all(comments.map(async (comment) => {
+      comment = comment.toObject(); // Convierte a objeto
+      comment.responses = await getCommentResponses(comment._id); // Llama a la función recursiva
+      return comment;
+    }));
 
-    res.json(uniqueComments);
+    res.json(commentsWithResponses);
   } catch (error) {
     console.error("Error fetching comments:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
 
 
 

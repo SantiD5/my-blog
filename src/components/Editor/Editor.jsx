@@ -17,8 +17,7 @@ import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import React, { useEffect, useState } from 'react';
-import './Editor.css'; // Custom CSS file
-
+import './Editor.css';
 const Tiptap = ({ onContentChange, content,edit}) => {
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
@@ -55,7 +54,7 @@ const Tiptap = ({ onContentChange, content,edit}) => {
       TableCell,
       TableHeader,
     ],
-    content: content || '<p>write...!</p>', // Fallback if no content is provided
+    content: content || '<p>write...!</p>', 
     autofocus: true,
     onUpdate({ editor }) {
       if (!isReadingMode) {
@@ -78,7 +77,7 @@ const Tiptap = ({ onContentChange, content,edit}) => {
           parsedContent = JSON.parse(content);
         } catch (error) {
           console.error('Error parsing content JSON:', error);
-          return; // Exit if JSON parsing fails
+          return;
         }
       } else {
         parsedContent = content; // Assume content is already a JS object

@@ -19,14 +19,13 @@ export const CommentProvider = ({ children }) => {
 
   const getComments = async (postId) => {
     setLoading(true);
-    setComments([]); // Clear comments or show a specific message
+    setComments([]);
 
     try {
         const response = await getCommentsRequest(postId);
 
         if (response.status === 404) {
-            // Handle not found scenario
-            setComments([]); // Clear comments or show a specific message
+            setComments([]); 
             console.error("Post not found.");
         } else {
             setComments(response.data);
@@ -41,7 +40,6 @@ export const CommentProvider = ({ children }) => {
 
   const getCommentById = async (id) => {
     setLoading(true);
-
     try {
       const response = await getCommentRequest(id);
       setComments(response.data);
@@ -93,27 +91,24 @@ export const CommentProvider = ({ children }) => {
 
   const handleLikeComment = async (id) => {
     setLoading(true); // Start loading
-  
     try {
-      const res = await likeComment(id); // Call the API function to like the comment
+      const res = await likeComment(id);
       if (res && res.data) {
-        // Handle successful response, e.g., update UI with the new like count
         console.log('Comment liked successfully:', res.data);
         setReload(!reload)
-        // You can also update the state or call a function to refresh comments
       }
     } catch (error) {
-      console.log(`Error liking comment: ${error}`); // Log the error
+      console.log(`Error liking comment: ${error}`);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false); 
     }
   };
   
 const getLikes = async (id) => {
-  setLoading(true); // Inicia la carga
+  setLoading(true); 
   
   try {
-    const res = await getLikesComment(id); // Supongamos que `likeComment` obtiene los datos de likes
+    const res = await getLikesComment(id); 
     if (res && res.data) {
       setComments((prevComments) =>
         prevComments.map((comment) =>
@@ -125,7 +120,7 @@ const getLikes = async (id) => {
   } catch (error) {
     console.log(`Error fetching likes for comment ${id}: ${error}`);
   } finally {
-    setLoading(false); // Termina la carga
+    setLoading(false); 
   }
 };
 

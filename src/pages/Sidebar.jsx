@@ -5,7 +5,7 @@ import { LuFilePlus, LuFiles } from "react-icons/lu";
 
 
 import { Sidebar } from "flowbite-react";
-
+// HandleTabChange Cambia el tab sin recargar la página
 export const SidebarComponent = ({ tab, handleTabChange }) => {
 
   return (
@@ -17,7 +17,7 @@ export const SidebarComponent = ({ tab, handleTabChange }) => {
               }`}
             icon={HiUser}
             active={tab === "Overview"}
-            onClick={() => handleTabChange("Overview")} // Cambiar el tab sin recargar la página
+            onClick={() => handleTabChange("Overview")} 
           >
             Overview
           </Sidebar.Item>
@@ -26,7 +26,7 @@ export const SidebarComponent = ({ tab, handleTabChange }) => {
               }`}
             icon={LuFilePlus}
             active={tab === "posts"}
-            onClick={() => handleTabChange("posts")} // Cambiar el tab sin recargar la página
+            onClick={() => handleTabChange("posts")}
           >
             Create a Posts
           </Sidebar.Item>
@@ -44,7 +44,7 @@ export const SidebarComponent = ({ tab, handleTabChange }) => {
               }`}
             icon={CiSettings}
             active={tab === "settings"}
-            onClick={() => handleTabChange("settings")} // Cambiar el tab sin recargar la página
+            onClick={() => handleTabChange("settings")} 
           >
             Settings
           </Sidebar.Item>

@@ -28,7 +28,7 @@ export const Navbar = () => {
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768); // 768px is a common breakpoint for mobile
+      setIsMobile(window.innerWidth < 768); 
     };
     checkMobile();
     window.addEventListener("resize", checkMobile);
