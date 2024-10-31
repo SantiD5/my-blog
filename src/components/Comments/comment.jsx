@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BiMessageRounded } from "react-icons/bi";
 import { FaHeart, FaRegHeart, FaShareAlt } from "react-icons/fa";
+import { HiDotsHorizontal } from "react-icons/hi";
 import { useAuth } from "../../context/authContext";
 import { useComment } from "../../context/commentContext";
-
 export const CommentSection = ({ blog }) => {
   const {
     comments,
@@ -20,8 +20,25 @@ export const CommentSection = ({ blog }) => {
   const [error, setError] = useState("");
   const [replyContents, setReplyContents] = useState({});
   const [replyVisible, setReplyVisible] = useState(null);
+  const [isPopOpen,setIsPopOpen] = useState(null)
   const [isTextAreaFocused, setIsTextAreaFocused] = useState(false); 
   const [parentId, setParentId] = useState(null);
+  const popoverRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popoverRef.current && !popoverRef.current.contains(event.target)) {
+        setIsPopOpen({ id: null, open: false });
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  const popOver = (commentId) =>{
+    setIsPopOpen(isPopOpen === commentId ? null : commentId)
+  }
 
   const handleLike = async (e, commentId) => {
     e.preventDefault();
@@ -147,6 +164,18 @@ export const CommentSection = ({ blog }) => {
                   <FaShareAlt />
                   <span>Share</span>
                 </button>
+                <button
+                    type="button"
+                    className="flex items-center space-x-1"
+                    onClick={() => popOver(response._id)}
+                  >
+                    <HiDotsHorizontal />
+                  </button>
+                  {
+                    isPopOpen === response._id && (
+                      <p>testeando esta mierda</p>
+                    )
+                  }
               </div>
   
               {replyVisible === response._id && (
@@ -221,7 +250,7 @@ export const CommentSection = ({ blog }) => {
               >
                 <p className="text-gray-700">{comment.content}</p>
                 <span className="text-sm text-gray-500">
-                  - {comment.author}
+                   {userById || "Usuario desconocido"}
                 </span>
 
                 <div className="flex space-x-2 mt-2">
@@ -253,6 +282,29 @@ export const CommentSection = ({ blog }) => {
                     <FaShareAlt />
                     <span>Share</span>
                   </button>
+                  <button
+                    type="button"
+                    className="flex items-center space-x-1"
+                    onClick={() => popOver(comment._id)}
+                  >
+                    <HiDotsHorizontal />
+                  </button>
+                  {
+                    isPopOpen === comment._id &&  (
+                      <div className="!ml-[174px] absolute mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                      <button
+                        className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                      >
+                        Editar comentario
+                      </button>
+                      <button
+                        className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-100"
+                      >
+                        Eliminar comentario
+                      </button>
+                    </div>
+                    )
+                  }
                 </div>
 
                 {comment.responses && comment.responses.length > 0 && (
