@@ -4,6 +4,7 @@ import { FaHeart, FaRegHeart, FaShareAlt } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useAuth } from "../../context/authContext";
 import { useComment } from "../../context/commentContext";
+import { Alert } from "../Alert/Alert";
 export const CommentSection = ({ blog }) => {
   const {
     comments,
@@ -13,16 +14,18 @@ export const CommentSection = ({ blog }) => {
     setComment,
     handleLikeComment,
     reload,
+    deleteCommentById,
   } = useComment();
-
-  const { user , getUserByid , userById ,setUserById} = useAuth();
+  const {isAuthenticated} = useAuth()
+  const { user, getUserByid, userById, setUserById } = useAuth();
   const [newComment, setNewComment] = useState("");
   const [error, setError] = useState("");
   const [replyContents, setReplyContents] = useState({});
   const [replyVisible, setReplyVisible] = useState(null);
-  const [isPopOpen,setIsPopOpen] = useState(null)
-  const [isTextAreaFocused, setIsTextAreaFocused] = useState(false); 
+  const [isPopOpen, setIsPopOpen] = useState(null);
+  const [isTextAreaFocused, setIsTextAreaFocused] = useState(false);
   const [parentId, setParentId] = useState(null);
+  const [isAlert, setIsAlert] = useState(null);
   const popoverRef = useRef(null);
 
   useEffect(() => {
@@ -31,15 +34,28 @@ export const CommentSection = ({ blog }) => {
         setIsPopOpen({ id: null, open: false });
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  const popOver = (commentId) =>{
-    setIsPopOpen(isPopOpen === commentId ? null : commentId)
-  }
-
+  const popOver = (commentId) => {
+    setIsPopOpen(isPopOpen === commentId ? null : commentId);
+    console.log(commentId);
+  };
+  const deleteHandle = () => {
+    setIsAlert((prev) => (prev ? null : true));
+  };
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const res = await deleteCommentById(commentId);
+      if (res && res.data) {
+        setComment(res.data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
   const handleLike = async (e, commentId) => {
     e.preventDefault();
     e.stopPropagation();
@@ -109,10 +125,10 @@ export const CommentSection = ({ blog }) => {
     try {
       const newReplyData = await createComment({
         blogId: blog,
-        content: replyContents[commentId], 
-        parentId: commentId, 
+        content: replyContents[commentId],
+        parentId: commentId,
       });
-      setReplyContents((prev) => ({ ...prev, [commentId]: "" })); 
+      setReplyContents((prev) => ({ ...prev, [commentId]: "" }));
       setError("");
       setComment((prevComments) => [...prevComments, newReplyData.data]);
     } catch (e) {
@@ -122,7 +138,7 @@ export const CommentSection = ({ blog }) => {
   };
   const getUserByIdComment = async (id) => {
     try {
-      const res = await getUserByid(id); 
+      const res = await getUserByid(id);
       if (res.data) {
         setUserById(res.data);
       }
@@ -136,23 +152,35 @@ export const CommentSection = ({ blog }) => {
     return (
       <div className="ml-4">
         {responses.map((response) => {
-  
           return (
-            <div key={response._id} className="bg-gray-50 p-3 rounded-md shadow-sm mt-2">
+            <div
+              key={response._id}
+              className="bg-gray-50 p-3 rounded-md shadow-sm mt-2"
+            >
               <p className="text-gray-600">{response.content}</p>
-              <span className="text-sm text-gray-500">{userById || "Usuario desconocido"}</span>
+              <span className="text-sm text-gray-500">
+                {userById || "Usuario desconocido"}
+              </span>
               <div className="flex space-x-2 mt-2">
                 <button
                   type="button"
                   className="flex items-center space-x-1"
                   onClick={(e) => handleLike(e, response._id)}
                 >
-                  {response.likedBy?.includes(user?.id) ? <FaHeart /> : <FaRegHeart />}
+                  {response.likedBy?.includes(user?.id) ? (
+                    <FaHeart />
+                  ) : (
+                    <FaRegHeart />
+                  )}
                   <span className="p-1">{response.likes}</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => setReplyVisible(replyVisible === response._id ? null : response._id)}
+                  onClick={() =>
+                    setReplyVisible(
+                      replyVisible === response._id ? null : response._id
+                    )
+                  }
                 >
                   <BiMessageRounded />
                 </button>
@@ -164,28 +192,53 @@ export const CommentSection = ({ blog }) => {
                   <FaShareAlt />
                   <span>Share</span>
                 </button>
-                <button
-                    type="button"
-                    className="flex items-center space-x-1"
-                    onClick={() => popOver(response._id)}
-                  >
-                    <HiDotsHorizontal />
-                  </button>
-                  {
-                    isPopOpen === response._id && (
-                      <p>testeando esta mierda</p>
-                    )
-                  }
+                {isAuthenticated && user.id === response.userId._id ? (
+                  <>
+                    <button
+                      type="button"
+                      className="flex items-center space-x-1"
+                      onClick={() => popOver(response._id)}
+                    >
+                      <HiDotsHorizontal />
+                    </button>
+                    {isPopOpen === response._id && (
+                    <div className="!ml-[174px] absolute mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                      <button className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
+                        Editar comentario
+                      </button>
+
+                      <button
+                        className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-100"
+                        onClick={deleteHandle}
+                      >
+                        Eliminar comentario
+                      </button>
+                      {isAlert ? null : (
+                        <Alert
+                          cancel={() => deleteHandle()}
+                          onConfirm={() => handleDeleteComment(response._id)}
+                        />
+                      )}
+                    </div>
+                  )}
+                  </>
+                ) : null}
+
               </div>
-  
+
               {replyVisible === response._id && (
-                <form onSubmit={(e) => handleReplySubmit(e, response._id)} className="mt-4 relative">
+                <form
+                  onSubmit={(e) => handleReplySubmit(e, response._id)}
+                  className="mt-4 relative"
+                >
                   <textarea
                     className="px-4 py-2 border border-gray-300 rounded-md w-full resize-none"
                     placeholder="Agregar una respuesta..."
                     rows="2"
                     value={replyContents[response._id] || ""}
-                    onChange={(e) => handleReplyChange(response._id, e.target.value)}
+                    onChange={(e) =>
+                      handleReplyChange(response._id, e.target.value)
+                    }
                   />
                   <div className="absolute right-0 top-0 flex space-x-2 mt-2">
                     <button
@@ -204,21 +257,20 @@ export const CommentSection = ({ blog }) => {
                   </div>
                 </form>
               )}
-  
+
               {/* Renderiza respuestas anidadas */}
-              {response.responses && response.responses.length > 0 && renderResponses(response.responses)}
+              {response.responses &&
+                response.responses.length > 0 &&
+                renderResponses(response.responses)}
             </div>
           );
         })}
       </div>
     );
   };
-  
 
   return (
-
     <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-      
       <div className="p-6 border-t border-gray-200">
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">
           Comentarios
@@ -250,7 +302,7 @@ export const CommentSection = ({ blog }) => {
               >
                 <p className="text-gray-700">{comment.content}</p>
                 <span className="text-sm text-gray-500">
-                   {userById || "Usuario desconocido"}
+                  {userById || "Usuario desconocido"}
                 </span>
 
                 <div className="flex space-x-2 mt-2">
@@ -269,7 +321,9 @@ export const CommentSection = ({ blog }) => {
                   <button
                     type="button"
                     onClick={() =>
-                      setReplyVisible(replyVisible === comment._id ? null : comment._id)
+                      setReplyVisible(
+                        replyVisible === comment._id ? null : comment._id
+                      )
                     }
                   >
                     <BiMessageRounded />
@@ -282,29 +336,39 @@ export const CommentSection = ({ blog }) => {
                     <FaShareAlt />
                     <span>Share</span>
                   </button>
-                  <button
+                  {isAuthenticated && user.id === comment.userId._id ? (
+                  <>
+                    <button
                     type="button"
                     className="flex items-center space-x-1"
                     onClick={() => popOver(comment._id)}
                   >
-                    <HiDotsHorizontal />
-                  </button>
-                  {
-                    isPopOpen === comment._id &&  (
-                      <div className="!ml-[174px] absolute mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                      <button
-                        className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
-                      >
+                      <HiDotsHorizontal />
+                    </button>
+                    {isPopOpen === comment._id && (
+                    <div className="!ml-[174px] absolute mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                      <button className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
                         Editar comentario
                       </button>
+
                       <button
                         className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-100"
+                        onClick={deleteHandle}
                       >
                         Eliminar comentario
                       </button>
+                      {isAlert ? null : (
+                        <Alert
+                          cancel={() => deleteHandle()}
+                          onConfirm={() => handleDeleteComment(comment._id)}
+                        />
+                      )}
                     </div>
-                    )
-                  }
+                  )}
+                  </>
+                ) : null}
+                  
+            
                 </div>
 
                 {comment.responses && comment.responses.length > 0 && (
@@ -326,7 +390,9 @@ export const CommentSection = ({ blog }) => {
                       placeholder="Agregar una respuesta..."
                       rows="2"
                       value={replyContents[comment._id] || ""}
-                      onChange={(e) => handleReplyChange(comment._id, e.target.value)}
+                      onChange={(e) =>
+                        handleReplyChange(comment._id, e.target.value)
+                      }
                     />
                     <div className="absolute right-0 top-0 flex space-x-2 mt-2">
                       <button
@@ -351,8 +417,6 @@ export const CommentSection = ({ blog }) => {
             <p>No hay comentarios aún. ¡Sé el primero en comentar!</p>
           )}
         </div>
-
-       
       </div>
     </div>
   );
