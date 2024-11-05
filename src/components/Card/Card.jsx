@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 
 export const Card = ({ description, id, date, minutes, title }) => {
   const formattedDate = new Date(date).toLocaleDateString();
+  console.log(date)
 
   return (
     <article className="max-w-3xl bg-gray-900 border border-gray-700 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl dark:bg-gray-800 dark:border-gray-600 mb-8">

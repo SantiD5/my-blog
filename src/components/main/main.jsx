@@ -52,7 +52,7 @@ export const Main = () => {
                     description={blog.description}
                     img={blog.img}
                     minutes={blog.minutes}
-                    date={blog.date}
+                    date={blog.createdAt}
                     category={blog.category}
                     id={blog._id}
                   />

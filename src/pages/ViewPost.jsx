@@ -103,7 +103,7 @@ export const ViewPost = () => {
               <p className="text-gray-300">{blog.author}</p>
               <FaCalendarAlt className="text-pink-500" />
               <p className="text-gray-300">
-                Published on {new Date(blog.publishedAt).toLocaleDateString()}
+                Published on {new Date(blog.createdAt).toLocaleDateString()}
               </p>
             </div>
 
