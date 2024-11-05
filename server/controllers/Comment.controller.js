@@ -80,7 +80,7 @@ export const getComment = async (req, res) => {
 // Función para obtener las respuestas de un comentario
 const getCommentResponses = async (commentId) => {
   const responses = await Comment.find({ parentId: commentId })
-    .populate('userId', 'name')
+    .populate('userId', 'username')
     .exec();
   
   // Para cada respuesta, busca sus propias respuestas recursivamente
@@ -102,7 +102,7 @@ export const getComments = async (req, res) => {
   try {
     // Obtener solo los comentarios principales
     const comments = await Comment.find({ blog: postId, parentId: null })
-      .populate('userId', 'name')
+      .populate('userId', 'username')
       .exec();
 
     // Para cada comentario, obtener sus respuestas

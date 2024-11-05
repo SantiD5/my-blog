@@ -44,6 +44,7 @@ export const CommentSection = ({ blog }) => {
     console.log(commentId);
   };
   const deleteHandle = () => {
+    console.log("wtf man")
     setIsAlert((prev) => (prev ? null : true));
   };
   const handleDeleteComment = async (commentId) => {
@@ -136,16 +137,7 @@ export const CommentSection = ({ blog }) => {
       console.log(e);
     }
   };
-  const getUserByIdComment = async (id) => {
-    try {
-      const res = await getUserByid(id);
-      if (res.data) {
-        setUserById(res.data);
-      }
-    } catch (e) {
-      console.log("Error fetching user by ID:", e);
-    }
-  };
+
   if (loading) return <p>Cargando comentarios...</p>;
 
   const renderResponses = (responses) => {
@@ -159,7 +151,7 @@ export const CommentSection = ({ blog }) => {
             >
               <p className="text-gray-600">{response.content}</p>
               <span className="text-sm text-gray-500">
-                {userById || "Usuario desconocido"}
+              {response.userId.username || "Usuario desconocido"}
               </span>
               <div className="flex space-x-2 mt-2">
                 <button
@@ -302,7 +294,7 @@ export const CommentSection = ({ blog }) => {
               >
                 <p className="text-gray-700">{comment.content}</p>
                 <span className="text-sm text-gray-500">
-                  {userById || "Usuario desconocido"}
+                  {comment.userId.username || "Usuario desconocido"}
                 </span>
 
                 <div className="flex space-x-2 mt-2">
