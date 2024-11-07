@@ -66,11 +66,13 @@ export const CommentProvider = ({ children }) => {
   const editCommentById = async (id,comment) => {
     setLoading(true);
     try {
+      console.log(comment)
       const res = await updateCommentRequest(id, comment);
+      console.log(res)
       setComments((prevComments) =>
         prevComments.map((c) => (c.id === id ? res.data : c))
       );
-      console.log(res);
+      console.log(comments);
     } catch (error) {
       console.log(`Error updating comment: ${error}`);
     } finally {

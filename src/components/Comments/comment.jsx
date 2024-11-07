@@ -15,17 +15,23 @@ export const CommentSection = ({ blog }) => {
     handleLikeComment,
     reload,
     deleteCommentById,
+    editCommentById
   } = useComment();
-  const {isAuthenticated} = useAuth()
-  const { user, getUserByid, userById, setUserById } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const { user } = useAuth();
   const [newComment, setNewComment] = useState("");
+  const [editComment, setEditComment] = useState("");
+  const [editingContent,setEditingContent] = useState(null)
   const [error, setError] = useState("");
   const [replyContents, setReplyContents] = useState({});
+  const [editContents, setEditContents] = useState({});
   const [replyVisible, setReplyVisible] = useState(null);
   const [isPopOpen, setIsPopOpen] = useState(null);
   const [isTextAreaFocused, setIsTextAreaFocused] = useState(false);
   const [parentId, setParentId] = useState(null);
   const [isAlert, setIsAlert] = useState(null);
+  const [isEdit, setIsEdit] = useState(null);
   const popoverRef = useRef(null);
 
   useEffect(() => {
@@ -39,14 +45,25 @@ export const CommentSection = ({ blog }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+  const cancelEdit = () => {
+    setIsEdit(false); // Actualiza el estado isEdit o el estado que estés utilizando para controlar el modo de edición
+    setEditComment("");
+  };
+  const handleEdit = (id,content) => {
+    console.log(content)
+    console.log(id);
+    setIsEdit((prev) => (prev ? null : id));
+    setEditingCommentId(id);
+    setEditingContent(content); 
+  };
   const popOver = (commentId) => {
     setIsPopOpen(isPopOpen === commentId ? null : commentId);
     console.log(commentId);
   };
   const deleteHandle = () => {
-    console.log("wtf man")
     setIsAlert((prev) => (prev ? null : true));
   };
+
   const handleDeleteComment = async (commentId) => {
     try {
       const res = await deleteCommentById(commentId);
@@ -97,7 +114,6 @@ export const CommentSection = ({ blog }) => {
       setError("El comentario no puede estar vacío");
       return;
     }
-
     try {
       const newCommentData = await createComment({
         blogId: blog,
@@ -111,8 +127,43 @@ export const CommentSection = ({ blog }) => {
       console.log(e);
     }
   };
+  const handleCommentEdit= async (e) => {
+    e.preventDefault();
+    console.log(`this is my blog ${blog}`)
+    console.log(editComment)
+
+    if (!editComment.trim()) {
+      setError("El comentario no puede estar vacío");
+      return;
+    }
+    try {
+      const editCommentData = await editCommentById(
+        editingCommentId,
+        { content: editComment }      );
+      setNewComment("");
+      setError("");
+      setComment((prevComments) => {
+        const index = prevComments.findIndex((comment) => comment._id === editCommentData.data._id);
+        if (index === -1) return prevComments; // If comment not found, return unchanged state
+      
+        const updatedComments = [...prevComments];
+        updatedComments[index] = editCommentData.data; // Update specific comment
+      
+        return updatedComments;
+      });  
+      }catch (e){
+      setError("No se pudo enviar el comentario");
+      console.log(e);
+    }
+  };
   const handleReplyChange = (commentId, value) => {
     setReplyContents((prev) => ({
+      ...prev,
+      [commentId]: value,
+    }));
+  };
+  const editReplyChange = (commentId, value) => {
+    setEditContents((prev) => ({
       ...prev,
       [commentId]: value,
     }));
@@ -143,120 +194,157 @@ export const CommentSection = ({ blog }) => {
   const renderResponses = (responses) => {
     return (
       <div className="ml-4">
-        {responses.map((response) => {
-          return (
-            <div
-              key={response._id}
-              className="bg-gray-50 p-3 rounded-md shadow-sm mt-2"
-            >
-              <p className="text-gray-600">{response.content}</p>
-              <span className="text-sm text-gray-500">
-              {response.userId.username || "Usuario desconocido"}
-              </span>
-              <div className="flex space-x-2 mt-2">
-                <button
-                  type="button"
-                  className="flex items-center space-x-1"
-                  onClick={(e) => handleLike(e, response._id)}
-                >
-                  {response.likedBy?.includes(user?.id) ? (
-                    <FaHeart />
-                  ) : (
-                    <FaRegHeart />
-                  )}
-                  <span className="p-1">{response.likes}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setReplyVisible(
-                      replyVisible === response._id ? null : response._id
-                    )
-                  }
-                >
-                  <BiMessageRounded />
-                </button>
-                <button
-                  type="button"
-                  className="flex items-center space-x-1"
-                  onClick={(e) => handleShare(e, response._id)}
-                >
-                  <FaShareAlt />
-                  <span>Share</span>
-                </button>
-                {isAuthenticated && user.id === response.userId._id ? (
-                  <>
-                    <button
-                      type="button"
-                      className="flex items-center space-x-1"
-                      onClick={() => popOver(response._id)}
-                    >
-                      <HiDotsHorizontal />
-                    </button>
-                    {isPopOpen === response._id && (
-                    <div className="!ml-[174px] absolute mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                      <button className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
-                        Editar comentario
-                      </button>
-
-                      <button
-                        className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-100"
-                        onClick={deleteHandle}
-                      >
-                        Eliminar comentario
-                      </button>
-                      {isAlert ? null : (
-                        <Alert
-                          cancel={() => deleteHandle()}
-                          onConfirm={() => handleDeleteComment(response._id)}
-                        />
-                      )}
-                    </div>
-                  )}
-                  </>
-                ) : null}
-
-              </div>
-
-              {replyVisible === response._id && (
-                <form
-                  onSubmit={(e) => handleReplySubmit(e, response._id)}
-                  className="mt-4 relative"
-                >
+        {responses.map((response) => (
+          <div
+            key={response._id}
+            className="bg-gray-50 p-3 rounded-md shadow-sm mt-2"
+          >
+            {isEdit === response._id ? (
+              <>
+                <form onSubmit={handleCommentEdit}
+ className="mt-4 p-4 bg-gray-50 border border-gray-300 rounded-md shadow-md">
                   <textarea
                     className="px-4 py-2 border border-gray-300 rounded-md w-full resize-none"
-                    placeholder="Agregar una respuesta..."
-                    rows="2"
-                    value={replyContents[response._id] || ""}
-                    onChange={(e) =>
-                      handleReplyChange(response._id, e.target.value)
-                    }
+                    placeholder="Editar comentario..."
+                    rows="4"
+                    value={editComment || response.content }
+                    onChange={(e) => setEditComment(e.target.value)}
+
+              
                   />
-                  <div className="absolute right-0 top-0 flex space-x-2 mt-2">
+                  <div className="mt-2 flex justify-end space-x-2">
                     <button
                       type="submit"
                       className="bg-blue-500 text-white px-4 py-2 rounded-md"
                     >
-                      Enviar Respuesta
+                      Guardar
                     </button>
                     <button
                       type="button"
-                      onClick={() => setReplyVisible(null)}
                       className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
+                      onClick={cancelEdit}
                     >
                       Cancelar
                     </button>
                   </div>
                 </form>
-              )}
+              </>
+            ) : (
+              <>
+                <p className="text-gray-600">{response.content}</p>
+                <span className="text-sm text-gray-500">
+                  {response.userId.username || "Usuario desconocido"}
+                </span>
+                <div className="flex space-x-2 mt-2">
+                  <button
+                    type="button"
+                    className="flex items-center space-x-1"
+                    onClick={(e) => handleLike(e, response._id)}
+                  >
+                    {response.likedBy?.includes(user?.id) ? (
+                      <FaHeart />
+                    ) : (
+                      <FaRegHeart />
+                    )}
+                    <span className="p-1">{response.likes}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setReplyVisible(
+                        replyVisible === response._id ? null : response._id
+                      )
+                    }
+                  >
+                    <BiMessageRounded />
+                  </button>
+                  <button
+                    type="button"
+                    className="flex items-center space-x-1"
+                    onClick={(e) => handleShare(e, response._id)}
+                  >
+                    <FaShareAlt />
+                    <span>Share</span>
+                  </button>
 
-              {/* Renderiza respuestas anidadas */}
-              {response.responses &&
-                response.responses.length > 0 &&
-                renderResponses(response.responses)}
-            </div>
-          );
-        })}
+                  {isAuthenticated && user.id === response.userId._id && (
+                    <>
+                      <button
+                        type="button"
+                        className="flex items-center space-x-1"
+                        onClick={() => popOver(response._id)}
+                      >
+                        <HiDotsHorizontal />
+                      </button>
+                      {isPopOpen === response._id && (
+                        <div className="!ml-[174px] absolute mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                          <button
+                            className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                            onClick={() => handleEdit(response._id, editComment)}
+                          >
+                            Editar comentario
+                          </button>
+                          <button
+                            className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-100"
+                            onClick={deleteHandle}
+                          >
+                            Eliminar comentario
+                          </button>
+                          {isAlert && (
+                            <Alert
+                              cancel={() => deleteHandle()}
+                              onConfirm={() =>
+                                handleDeleteComment(response._id)
+                              }
+                            />
+                          )}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              </>
+            )}
+
+            {replyVisible === response._id && (
+              <form
+                onSubmit={(e) => handleReplySubmit(e, response._id)}
+                className="mt-4 relative"
+              >
+                <textarea
+                  className="px-4 py-2 border border-gray-300 rounded-md w-full resize-none"
+                  placeholder="Agregar una respuesta..."
+                  rows="2"
+                  value={replyContents[response._id] || "test"} // Asigna el valor correcto para este comentario
+                  onChange={(e) =>
+                    handleReplyChange(response._id, e.target.value) // Actualiza el valor correctamente
+                  }
+                />
+                <div className="absolute right-0 top-0 flex space-x-2 mt-2">
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                  >
+                    Enviar Respuesta
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setReplyVisible(null)}
+                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+              
+            )}
+
+            {/* Renderiza respuestas anidadas */}
+            {response.responses &&
+              response.responses.length > 0 &&
+              renderResponses(response.responses)}
+          </div>
+        ))}
       </div>
     );
   };
@@ -292,77 +380,111 @@ export const CommentSection = ({ blog }) => {
                 key={comment._id}
                 className="bg-gray-100 p-4 rounded-lg shadow-sm"
               >
-                <p className="text-gray-700">{comment.content}</p>
-                <span className="text-sm text-gray-500">
-                  {comment.userId.username || "Usuario desconocido"}
-                </span>
+                {isEdit === comment._id ? (
+                  <form onSubmit={handleCommentEdit} className="mt-4 p-4 bg-gray-50 border border-gray-300 rounded-md shadow-md">
+                    <textarea
+                      className="px-4 py-2 border border-gray-300 rounded-md w-full resize-none"
+                      placeholder="Editar comentario..."
+                      rows="4"
+                      value={editComment || comment.content }
+                    onChange={(e) => setEditComment(e.target.value)}
 
-                <div className="flex space-x-2 mt-2">
-                  <button
-                    type="button"
-                    className="flex items-center space-x-1"
-                    onClick={(e) => handleLike(e, comment._id)}
-                  >
-                    {comment.likedBy?.includes(user?.id) ? (
-                      <FaHeart />
-                    ) : (
-                      <FaRegHeart />
-                    )}
-                    <span className="p-1">{comment.likes}</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setReplyVisible(
-                        replyVisible === comment._id ? null : comment._id
-                      )
-                    }
-                  >
-                    <BiMessageRounded />
-                  </button>
-                  <button
-                    type="button"
-                    className="flex items-center space-x-1"
-                    onClick={(e) => handleShare(e, comment._id)}
-                  >
-                    <FaShareAlt />
-                    <span>Share</span>
-                  </button>
-                  {isAuthenticated && user.id === comment.userId._id ? (
-                  <>
-                    <button
-                    type="button"
-                    className="flex items-center space-x-1"
-                    onClick={() => popOver(comment._id)}
-                  >
-                      <HiDotsHorizontal />
-                    </button>
-                    {isPopOpen === comment._id && (
-                    <div className="!ml-[174px] absolute mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                      <button className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
-                        Editar comentario
-                      </button>
-
+                    />
+                    <div className="mt-2 flex justify-end space-x-2">
                       <button
-                        className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-100"
-                        onClick={deleteHandle}
+                        type="submit"
+                        className="bg-blue-500 text-white px-4 py-2 rounded-md"
                       >
-                        Eliminar comentario
+                        Guardar
                       </button>
-                      {isAlert ? null : (
-                        <Alert
-                          cancel={() => deleteHandle()}
-                          onConfirm={() => handleDeleteComment(comment._id)}
-                        />
+                      <button
+                        type="button"
+                        className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
+                        onClick={() => cancelEdit()}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    <p className="text-gray-700">{comment.content}</p>
+                    <span className="text-sm text-gray-500">
+                      {comment.userId.username || "Usuario desconocido"}
+                    </span>
+
+                    <div className="flex space-x-2 mt-2">
+                      <button
+                        type="button"
+                        className="flex items-center space-x-1"
+                        onClick={(e) => handleLike(e, comment._id)}
+                      >
+                        {comment.likedBy?.includes(user?.id) ? (
+                          <FaHeart />
+                        ) : (
+                          <FaRegHeart />
+                        )}
+                        <span className="p-1">{comment.likes}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setReplyVisible(
+                            replyVisible === comment._id ? null : comment._id
+                          )
+                        }
+                      >
+                        <BiMessageRounded />
+                      </button>
+                      <button
+                        type="button"
+                        className="flex items-center space-x-1"
+                        onClick={(e) => handleShare(e, comment._id)}
+                      >
+                        <FaShareAlt />
+                        <span>Share</span>
+                      </button>
+                      {isAuthenticated && user.id === comment.userId._id && (
+                        <>
+                          <button
+                            type="button"
+                            className="flex items-center space-x-1"
+                            onClick={() => popOver(comment._id)}
+                          >
+                            <HiDotsHorizontal />
+                          </button>
+                          {isPopOpen === comment._id && (
+                            <div className="!ml-[174px] absolute mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                              <button
+                                className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                                onClick={() => handleEdit(comment._id,editComment)}
+                              >
+                                Editar comentario
+                              </button>
+
+                              <button
+                                className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-100"
+                                onClick={() => deleteHandle(comment._id)}
+                              >
+                                Eliminar comentario
+                              </button>
+                              {isAlert && (
+                                <Alert
+                                  cancel={() => deleteHandle(comment._id)}
+                                  onConfirm={() =>
+                                    handleDeleteComment(comment._id)
+                                  }
+                                />
+                              )}
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
-                  )}
                   </>
-                ) : null}
-                  
-            
-                </div>
+                )}
 
+                {/* Renderizar respuestas anidadas */}
                 {comment.responses && comment.responses.length > 0 && (
                   <>
                     <h4 className="text-sm font-semibold text-gray-600 mt-2">
