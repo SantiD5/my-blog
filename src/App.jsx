@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { AdminRoutes } from './admin.jsx';
-import { CommentSection } from './components/Comments/comment.jsx';
+import { CommentSection } from './components/Comments/commentSection.jsx';
 import { Footer } from './components/Footer/Footer.jsx';
 import { Main } from './components/main/main.jsx';
 import { Navbar } from './components/navbar/navbar.jsx';

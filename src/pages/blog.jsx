@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { CommentSection } from '../components/Comments/comment';
+import { CommentSection } from '../components/Comments/commentSection.jsx';
 import { Reader } from '../components/Reader/Reader';
 import { useBlog } from '../context/blogContext';
 
@@ -67,7 +67,7 @@ export const Blog = () => {
         {/* Blog Meta Info */}
         <div className="p-6 border-b border-gray-200 flex items-center justify-between">
           <p className="text-gray-600">
-            <span className="font-semibold">Category:</span> {loading ? 'Loading...' : blogPost ? blogPost.category : 'N/A'}
+            <span className="font-semibold">Category:</span> {loading ? 'Loading...' : blogPost.category != "" ? blogPost.category : 'N/A'}
           </p>
           <p className="text-gray-600">
             <span className="font-semibold">Published on:</span> {loading ? 'Loading...' : blogPost ? new Date(blogPost.createdAt).toLocaleDateString() : 'N/A'}
@@ -95,9 +95,6 @@ export const Blog = () => {
 
 
                 {/* Blog Slug */}
-                <p className="text-gray-600 mb-4">
-                  <span className="font-semibold">Slug:</span> {blogPost.slug}
-                </p>
               </div>
             ) : (
               <p className="text-gray-500">No blog content available.</p>
