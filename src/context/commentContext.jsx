@@ -83,7 +83,7 @@ export const CommentProvider = ({ children }) => {
     setLoading(true);
     try {
       await deleteCommentRequest(id);
-      setComments((prevComments) => prevComments.filter((c) => c.id !== id));
+      setComments((prevComments) => prevComments.filter((c) => c._id !== id));
     } catch (error) {
       console.log(`Error deleting comment: ${error}`);
     } finally {

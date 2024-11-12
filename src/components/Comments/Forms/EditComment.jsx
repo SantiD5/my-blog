@@ -1,23 +1,15 @@
 import React, { useRef, useState } from "react";
-import { useAuth } from "../../../context/authContext.jsx";
 import { useComment } from "../../../context/commentContext.jsx";
-const EditCommentForm = ({ comment, setIsEdit, handleEdit ,editingCommentId}) => {
+const EditCommentForm = ({ comment, setIsEdit ,editingCommentId}) => {
   const {
     setComment,
     editCommentById
   } = useComment();
-  const { isAuthenticated } = useAuth();
-  const { user } = useAuth();
   const [newComment, setNewComment] = useState("");
   const [editComment, setEditComment] = useState("");
   const [error, setError] = useState("");
   const [replyContents, setReplyContents] = useState({});
   const [editContents, setEditContents] = useState({});
-  const [replyVisible, setReplyVisible] = useState(null);
-  const [isPopOpen, setIsPopOpen] = useState(null);
-  const [isTextAreaFocused, setIsTextAreaFocused] = useState(false);
-  const [parentId, setParentId] = useState(null);
-  const [isAlert, setIsAlert] = useState(null);
   const popoverRef = useRef(null);
   const [editContent, setEditContent] = useState(comment.content);
   const handleCommentEdit= async (e) => {
@@ -25,7 +17,7 @@ const EditCommentForm = ({ comment, setIsEdit, handleEdit ,editingCommentId}) =>
     console.log(editContent)
     console.log(editingCommentId)
 
-    if (!editComment.trim()) {
+    if (!editContent.trim()) {
       setError("El comentario no puede estar vacío");
       return;
     }
@@ -58,7 +50,7 @@ const EditCommentForm = ({ comment, setIsEdit, handleEdit ,editingCommentId}) =>
         className="px-4 py-2 border border-gray-300 rounded-md w-full resize-none"
         placeholder="Editar comentario..."
         rows="4"
-        value={editContent }
+        value={editContent}
         onChange={(e) => setEditContent(e.target.value)}
       />
       <div className="mt-2 flex justify-end space-x-2">

@@ -20,12 +20,8 @@ const ReplyForm = ({ commentId, setReplyVisible, blog }) => {
         content: replyContent,
         parentId: commentId,
       });
-
-      // Reseteamos el contenido del comentario
       setReplyContent("");
       setError("");
-      
-      // Aquí actualizas los comentarios para reflejar la nueva respuesta
       setComment((prevComments) => [...prevComments, newReplyData.data]);
     } catch (e) {
       setError("No se pudo enviar el comentario");

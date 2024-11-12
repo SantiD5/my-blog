@@ -4,10 +4,10 @@ import { FaHeart, FaRegHeart, FaShareAlt } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useAuth } from "../../context/authContext.jsx";
 import { useComment } from "../../context/commentContext.jsx";
+import { Alert } from "../Alert/Alert.jsx";
 import ActionMenu from "./Forms/ActionMenu.jsx";
 import EditCommentForm from "./Forms/EditComment.jsx";
 import ReplyForm from "./Forms/ReplyForm.jsx";
-
 export const Comment = ({ comment, isAuthenticated ,blog}) => {
   const {
     comments,
@@ -25,8 +25,8 @@ export const Comment = ({ comment, isAuthenticated ,blog}) => {
   const [editingContent,setEditingContent] = useState(null)
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [replyVisible, setReplyVisible] = useState(null);
+  const [isAlert, setIsAlert] = useState(null);
   const [isPopOpen, setIsPopOpen] = useState(false);
-  const [liked, setLiked] = useState(comment.likedBy?.includes(user?.id)); // Estado local para el "like"
 
   // Actualizar el "like" solo en el comentario
   const handleLike = async (e, commentId) => {
@@ -36,37 +36,59 @@ export const Comment = ({ comment, isAuthenticated ,blog}) => {
       console.error("User is not authenticated");
       return;
     }
-
-    // Optimistic UI update: actualizar `liked` antes de hacer la solicitud
-    setLiked((prevLiked) => !prevLiked);
-    
     try {
       const res = await handleLikeComment(commentId, user.id);
       if (res && res.data) {
-        const { likes } = res.data;
-
-        // Actualizar el número de likes en el comentario después de la respuesta
+        const { likes, likedBy } = res.data;
+  
+        // Actualizamos el comentario específico en el estado `comments`
         setComment((prevComments) =>
           prevComments.map((comment) =>
-            comment._id === commentId ? { ...comment, likes } : comment
+            comment._id === commentId
+              ? { ...comment, likes, likedBy }
+              : comment
           )
         );
       }
     } catch (error) {
       console.error("Error liking the comment:", error);
-      // Revertir el cambio local si hubo un error
-      setLiked((prevLiked) => !prevLiked);
     }
   };
+  
+  
   const handleEdit = (id,content) => {
     console.log(content)
     console.log(id);
     setIsEdit((prev) => (prev ? null : id));
+    setIsPopOpen(false)
     setEditingCommentId(id);
     setEditingContent(content); 
   };
-  const deleteHandle = (commentId) => { /* lógica de eliminar */ };
+  
+  const deleteHandle = () => {
+    setIsAlert((prev) => (prev ? null : true));
+    setIsPopOpen(false)
+  };
+  const cancelEdit = () => {
+    setIsAlert(false);
 
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const res = await deleteCommentById(commentId);
+      if (res.status === 204) {
+        comments.filter(comment => comment._id != commentId);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const popOver = (commentId) => {
+    setIsPopOpen(isPopOpen === commentId ? null : commentId);
+    console.log(commentId);
+  };
   return (
     <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
       {isEdit ? (
@@ -88,8 +110,8 @@ export const Comment = ({ comment, isAuthenticated ,blog}) => {
               className="flex items-center space-x-1"
               onClick={(e) => handleLike(e, comment._id)}
             >
-              {liked ? <FaHeart /> : <FaRegHeart />}
-              <span className="p-1">{liked ? comment.likes + 1 : comment.likes}</span>
+              {comment.likedBy?.includes(user.id) ? <FaHeart /> : <FaRegHeart />}
+              <span className="p-1">{comment.likes}</span>
             </button>
             <button
               type="button"
@@ -107,7 +129,7 @@ export const Comment = ({ comment, isAuthenticated ,blog}) => {
             </button>
             {isAuthenticated && user.id === comment.userId._id && (
               <>
-                <button type="button" className="flex items-center space-x-1" onClick={() => setIsPopOpen(!isPopOpen)}>
+                <button type="button" className="flex items-center space-x-1" onClick={() => popOver(comment._id)}>
                   <HiDotsHorizontal />
                 </button>
                 {isPopOpen && (
@@ -117,6 +139,11 @@ export const Comment = ({ comment, isAuthenticated ,blog}) => {
                     deleteHandle={deleteHandle} 
                   />
                 )}
+                {
+                  isAlert && (
+                    <Alert cancel={cancelEdit} onConfirm={() => handleDeleteComment(comment._id)}/>
+                  ) 
+                }
               </>
             )}
           </div>
